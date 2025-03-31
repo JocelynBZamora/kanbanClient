@@ -1,0 +1,73 @@
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="Styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css" integrity="sha256-XoaMnoYC5TH6/+ihMEnospgm0J1PM/nioxbOUdnM8HY=" crossorigin="anonymous">
+    <title>Tablero Kanban</title>
+</head>
+<body class="body">
+    <header>
+        
+        <h1></h1>
+        <nav class="desplegable">
+            <a href="#">Cerrar</a>
+        </nav>
+    </header>
+    <main>
+        <div class="kanban">
+            <div class="column" id="todo" ondrop="drop(event)" ondragover="allowDrop(event)">
+                <h3>Pendiente</h3>
+                <section class="task" draggable="true" ondragstart="drag(event)" id="task1">
+                    <h4>Título de la Tarjeta</h4>
+                    <h6>Fecha de creación</h6>
+                    <p>Descripción de la tarjeta.</p>
+                    <a href="#"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                </section>
+                <section class="task" draggable="true" ondragstart="drag(event)" id="task2">
+                    <h4>Título de la Tarjeta</h4>
+                    <h6>Fecha de creación</h6>
+                    <p>Descripción de la tarjeta.</p>
+                    <a href="#"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                </section>
+                <section class="task" draggable="true" ondragstart="drag(event)" id="task3">
+                    <h4>Título de la Tarjeta</h4>
+                    <h6>Fecha de creación</h6>
+                    <p>Descripción de la tarjeta.</p>
+                    <a href="#"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                </section>
+                <section class="task" draggable="true" ondragstart="drag(event)" id="task4">
+                    <h4>Título de la Tarjeta</h4>
+                    <h6>Fecha de creación</h6>
+                    <p>Descripción de la tarjeta.</p>
+                    <a href="#"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                </section>
+               
+            </div>
+            <div class="column" id="inprogress" ondrop="drop(event)" ondragover="allowDrop(event)">
+                <h3>En progreso</h3>
+            </div>
+            <div class="column" id="done" ondrop="drop(event)" ondragover="allowDrop(event)">
+                <h3>Completado</h3>
+            </div>
+        </div>
+        <a href="#" class="add">+</a>
+    </main>
+    <script>
+    
+
+        //tabla
+        function allowDrop(event) {
+            event.preventDefault();
+        }
+        function drag(event) {
+            event.dataTransfer.setData("text", event.target.id);
+        }
+        function drop(event) {
+            event.preventDefault();
+            var data = event.dataTransfer.getData("text");
+            event.target.appendChild(document.getElementById(data));
+        }
+    </script>
+</body>
+</html>
