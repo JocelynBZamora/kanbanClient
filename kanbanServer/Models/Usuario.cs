@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace kanbanServer.Models
 {
-     public  class UsuarioDTO
+    public class Usuario
     {
-        public string Nombre { get; set; }
+        public string Nombre { get; set; } = "";
     }
 }
