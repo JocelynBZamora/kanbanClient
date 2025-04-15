@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 
 namespace kanbanServer.Services
 {
-    public class KanbanServer
+    public class KanbanServer   
     {
         HttpListener servidorbb = new();
         byte[] TareaIndex;
         public event Action<ListaTareasDTO>? Tarearesibida, TareaTerminada, TareaProseso, TareaEn;
         public KanbanServer() { TareaIndex = File.ReadAllBytes("assest/index.html"); }
-        public void Inicar()
+        public void Iniciar()
         {
             if (!servidorbb.IsListening)
             {

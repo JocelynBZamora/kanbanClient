@@ -7,56 +7,45 @@
         xmlns:viewmodels="clr-namespace:kanbanServer.ViewModels"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+    <Window.DataContext>
+        <viewmodels:KanbanViewModels></viewmodels:KanbanViewModels>
+    </Window.DataContext>
     <Grid Background="#f4f4f4">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" MinWidth="200"/>
-            <ColumnDefinition Width="*" MinWidth="200"/>
-            <ColumnDefinition Width="*" MinWidth="200"/>
+            <ColumnDefinition />
+            <ColumnDefinition />
         </Grid.ColumnDefinitions>
-
-        <Border Grid.Column="0" Background="#007bff" Padding="10">
-            <TextBlock Text="Pendiente" FontSize="16" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
-        </Border>
-        <Border Grid.Column="1" Background="#007bff" Padding="10">
-            <TextBlock Text="En progreso" FontSize="16" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
-        </Border>
-        <Border Grid.Column="2" Background="#007bff" Padding="10">
-            <TextBlock Text="Completado" FontSize="16" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
-        </Border>
-
-        <ScrollViewer Grid.Row="1" Grid.Column="0" Margin="10" Background="White" Padding="10" VerticalScrollBarVisibility="Auto">
-            <StackPanel>
-                <Border Background="#e3e3e3" Padding="5" Margin="5">
-                    <StackPanel>
-                        <TextBlock Text="Título de la Tarjeta" FontWeight="Bold"/>
-                        <TextBlock Text="Fecha de creación" FontStyle="Italic"/>
-                        <TextBlock Text="Juan."/>
-                        <TextBlock Text="Descripción de la tarjeta."/>
-                    </StackPanel>
-                </Border>
-                <Border Background="#e3e3e3" Padding="5" Margin="5">
-                    <StackPanel>
-                        <TextBlock Text="Título de la Tarjeta" FontWeight="Bold"/>
-                        <TextBlock Text="Fecha de creación" FontStyle="Italic"/>
-                        <TextBlock Text="Juan."/>
-                        <TextBlock Text="Descripción de la tarjeta."/>
-                    </StackPanel>
-                </Border>
-            </StackPanel>
-        </ScrollViewer>
-
-        <ScrollViewer Grid.Row="1" Grid.Column="1" Margin="10" Background="White" Padding="10" VerticalScrollBarVisibility="Auto">
-            <StackPanel>
-            </StackPanel>
-        </ScrollViewer>
-
-        <ScrollViewer Grid.Row="1" Grid.Column="2" Margin="10" Background="White" Padding="10" VerticalScrollBarVisibility="Auto">
-            <StackPanel>
-            </StackPanel>
-        </ScrollViewer>
+        <TextBlock Text="Servidor de kanban "
+                   Grid.ColumnSpan="2"
+                   TextAlignment="Center"
+                   FontSize="30"
+                   Foreground="Coral"/>
+        <Button Grid.Row="1"
+                Width="200" 
+                Height="200"
+                Background="Transparent"
+                FontSize="20"
+                Foreground="Coral"
+                Content="Iniciar" 
+                Command="{Binding IniciarCommand}"/>
+        <Button Grid.Row="1" 
+                Grid.Column="1"
+                Width="200" 
+                Height="200"
+                Background="Transparent" 
+                FontSize="20"
+                Foreground="Coral"
+                Content="Detener" 
+                Command="{Binding DetenerCommand}"/>
+        <TextBlock Grid.Row="2" 
+                   Grid.ColumnSpan="2"
+                   TextAlignment="Center"
+                   Foreground="Coral"
+                   Text="Estae programa esta echo por "/>
     </Grid>
 </Window>

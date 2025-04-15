@@ -26,7 +26,7 @@ namespace kanbanServer.ViewModels
         {
             try
             {
-                serverbb.Inicar();
+                serverbb.Iniciar();
             }
             catch (HttpListenerException ex)
             {
@@ -46,7 +46,7 @@ namespace kanbanServer.ViewModels
                         res.WaitForExit();
                         if (res.ExitCode == 0)
                         {
-                            serverbb.Inicar();
+                            serverbb.Iniciar();
                         }
                     }
                 }
