@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace kanbanServer.Services
@@ -50,14 +52,18 @@ namespace kanbanServer.Services
                 {
                     switch (context.Request.RawUrl)
                     {
+                        //me va  a traer el nombre del usuario, ip y su tarea
                         case "/kanban/nuevo":
-
+                            Tareas(context, Tarearesibida, null);
                             break;
                         case "/kanban/pendiente":
+                            Tareas(context, TareaProseso, EstadoTarea.Pendiente);
                             break;
                         case "/kanban/en":
+                            Tareas(context, TareaEn, EstadoTarea.EnProgreso);
                             break;
                         case "/kanban/terminada":
+                            Tareas(context, TareaTerminada, EstadoTarea.Terminada);
                             break;
                         default:
                             context.Response.StatusCode = (int)HttpStatusCode.NotFound; break;
@@ -68,6 +74,26 @@ namespace kanbanServer.Services
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+            }
+        }
+
+        private void Tareas(HttpListenerContext context, Action<ListaTareasDTO>? tarearesibida, EstadoTarea? e)
+        {
+            byte[] buffernombre = new byte[context.Request.ContentLength64];
+            context.Request.InputStream.Read(buffernombre, 0, buffernombre.Length);
+            string json = Encoding.UTF8.GetString(buffernombre);
+
+            var usuario = JsonSerializer.Deserialize<ListaTareasDTO>(json);
+
+            if (usuario != null)
+            {
+                usuario.FechaCreacion = DateTime.Now;
+                usuario.Ip = context.Request.RemoteEndPoint.ToString();
+                if (e != null)
+                {
+                    usuario.Estado = e.Value;
+                }
+                tarearesibida?.Invoke(usuario);
             }
         }
         public void Detener()
