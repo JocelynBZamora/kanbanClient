@@ -16,7 +16,7 @@ namespace kanbanServer.Services
         HttpListener servidorbb = new();
         byte[] TareaIndex;
         public event Action<ListaTareasDTO>? Tarearesibida, TareaTerminada, TareaProseso, TareaEn;
-        public KanbanServer() { TareaIndex = File.ReadAllBytes("assest/index.html"); }
+        public KanbanServer() { TareaIndex = File.ReadAllBytes("assest/login.html"); }
         public void Iniciar()
         {
             if (!servidorbb.IsListening)
@@ -76,7 +76,6 @@ namespace kanbanServer.Services
                 Console.WriteLine(ex.Message);
             }
         }
-
         private void Tareas(HttpListenerContext context, Action<ListaTareasDTO>? tarearesibida, EstadoTarea? e)
         {
             byte[] buffernombre = new byte[context.Request.ContentLength64];
