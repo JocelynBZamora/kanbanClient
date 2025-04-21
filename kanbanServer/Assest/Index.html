@@ -2,8 +2,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!--<link rel="stylesheet" href="/Assest/Styles.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css" integrity="sha256-XoaMnoYC5TH6/+ihMEnospgm0J1PM/nioxbOUdnM8HY=" crossorigin="anonymous">-->
+    <!--<link rel="stylesheet" href="/Assest/Styles.css">-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css" integrity="sha256-XoaMnoYC5TH6/+ihMEnospgm0J1PM/nioxbOUdnM8HY=" crossorigin="anonymous">
     <title>Tablero Kanban</title>
     <style>
 
@@ -484,7 +484,7 @@
                           <p>${descripcion}</p>  
                           <p>${encargado}</p>  
                           <a class="eliminar fa fa-trash" aria-hidden="true"
-                          onclick="eliminarTarea('${task.id}')">🗑️</a>
+                          onclick="eliminarTarea('${task.id}')"></a>
                       `;  
                       document.getElementById("todo").appendChild(task);  
                   } else {  
