@@ -441,12 +441,13 @@
                 <h3>Completado</h3>
             </div>
         </div>
-        <a href="/Assest/add.html" class="add" id="agregar">+</a>
+        <a href="#" class="add" id="agregar">+</a>
     </main>
     <script>
         const agregarTarea = document.getElementById("tareaAgregar");
         const vistaTareas = document.getElementById("vistaTareas");
         const btnAgregar = document.getElementById("btnAgregar");  
+        const agregar = document.getElementById("agregar");
         btnAgregar.addEventListener("click", async function () {  
            const titulo = document.getElementById("titulo").value;  
            const descripcion = document.getElementById("descripción").value;  
@@ -460,8 +461,7 @@
                    descripcion: descripcion,  
                    encargado: encargado,  
                    fecha: new Date().toLocaleDateString()  
-               };  
-
+               }; 
                try {  
                    const response = await fetch('/kanban/nuevo', {  
                        method: 'POST',  
@@ -481,7 +481,7 @@
                            <h4>${titulo}</h4>  
                            <h6>${taskData.fecha}</h6>  
                            <p>${descripcion}</p>  
-                           <a href="#"><i class="fa fa-trash" aria-hidden="true"></i></a>  
+                           <p>${encargado}</p>
                        `;  
                        document.getElementById("todo").appendChild(task);  
                    } else {  
@@ -495,6 +495,13 @@
                alert("Por favor, completa todos los campos.");  
            }  
         });
+        agregar.addEventListener("click", function () {  
+                   vistaTareas.style.display = "none";  
+                   agregarTarea.style.display = "grid";  
+                   document.getElementById("titulo").value = "";  
+                   document.getElementById("descripción").value = "";  
+                   document.getElementById("Encargado").value = "";  
+               });
         //tabla
         function allowDrop(event) {event.preventDefault();}
         function drag(event) { event.dataTransfer.setData("text", event.target.id);}
