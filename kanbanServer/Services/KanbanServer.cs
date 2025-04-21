@@ -13,10 +13,10 @@ namespace kanbanServer.Services
 {
     public class KanbanServer   
     {
-        HttpListener servidorbb = new();
+        HttpListener servidorbb = new HttpListener();
         byte[] TareaIndex;
         public event Action<ListaTareasDTO>? Tarearesibida, TareaTerminada, TareaProseso, TareaEn;
-        public KanbanServer() { TareaIndex = File.ReadAllBytes("assest/login.html"); }
+        public KanbanServer() { TareaIndex = File.ReadAllBytes("assest/index.html"); }
         public void Iniciar()
         {
             if (!servidorbb.IsListening)
@@ -36,8 +36,9 @@ namespace kanbanServer.Services
                 if (context.Request.HttpMethod == "GET")
                 {
                     switch (context.Request.RawUrl)
-                    {
+                    {  
                         case "/kanban/":
+                            TareaIndex = File.ReadAllBytes("assest/index.html");
                             context.Response.ContentLength64 = TareaIndex.Length;
                             context.Response.ContentType = "text/html";
                             context.Response.StatusCode = 200;
