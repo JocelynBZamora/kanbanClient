@@ -447,29 +447,53 @@
         const agregarTarea = document.getElementById("tareaAgregar");
         const vistaTareas = document.getElementById("vistaTareas");
         const btnAgregar = document.getElementById("btnAgregar");  
-        btnAgregar.addEventListener("click", async function ()
-        {
-            const titulo = document.getElementById("titulo").value;
-            const descripcion = document.getElementById("descripción").value;
-            const encargado = document.getElementById("Encargado").value;
-            if (titulo && descripcion && encargado) {
-                agregarTarea.style.display = "none";
-                vistaTareas.style.display = "block";
-                const task = document.createElement("section");
-                task.className = "task";
-                task.draggable = true;
-                task.id = `task${Math.floor(Math.random() * 1000)}`;
-                task.setAttribute("ondragstart", "drag(event)");
-                task.innerHTML = `
-                    <h4>${titulo}</h4>
-                    <h6>${new Date().toLocaleDateString()}</h6>
-                    <p>${descripcion}</p>
-                    <a href="#"><i class="fa fa-trash" aria-hidden="true"></i></a>
-                `;
-                document.getElementById("todo").appendChild(task);
-            } else {
-                alert("Por favor, completa todos los campos.");
-            }
+        btnAgregar.addEventListener("click", async function () {  
+           const titulo = document.getElementById("titulo").value;  
+           const descripcion = document.getElementById("descripción").value;  
+           const encargado = document.getElementById("Encargado").value;  
+           if (titulo && descripcion && encargado) {  
+               agregarTarea.style.display = "none";  
+               vistaTareas.style.display = "block";  
+
+               const taskData = {  
+                   titulo: titulo,  
+                   descripcion: descripcion,  
+                   encargado: encargado,  
+                   fecha: new Date().toLocaleDateString()  
+               };  
+
+               try {  
+                   const response = await fetch('/kanban/nuevo', {  
+                       method: 'POST',  
+                       headers: {  
+                           'Content-Type': 'application/json'  
+                       },  
+                       body: JSON.stringify(taskData)  
+                   });  
+
+                   if (response.ok) {  
+                       const task = document.createElement("section");  
+                       task.className = "task";  
+                       task.draggable = true;  
+                       task.id = `task${Math.floor(Math.random() * 1000)}`;  
+                       task.setAttribute("ondragstart", "drag(event)");  
+                       task.innerHTML = `  
+                           <h4>${titulo}</h4>  
+                           <h6>${taskData.fecha}</h6>  
+                           <p>${descripcion}</p>  
+                           <a href="#"><i class="fa fa-trash" aria-hidden="true"></i></a>  
+                       `;  
+                       document.getElementById("todo").appendChild(task);  
+                   } else {  
+                       alert("Error al enviar los datos al servidor.");  
+                   }  
+               } catch (error) {  
+                   console.error("Error:", error);  
+                   alert("Ocurrió un error al enviar los datos.");  
+               }  
+           } else {  
+               alert("Por favor, completa todos los campos.");  
+           }  
         });
         //tabla
         function allowDrop(event) {event.preventDefault();}
