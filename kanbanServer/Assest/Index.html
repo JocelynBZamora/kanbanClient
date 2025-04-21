@@ -431,7 +431,7 @@
         <div class="kanban">
             <div class="column" id="todo" ondrop="drop(event)" ondragover="allowDrop(event)">
                 <h3>Pendiente</h3>
-
+               
 
             </div>
             <div class="column" id="inprogress" ondrop="drop(event)" ondragover="allowDrop(event)">
@@ -444,75 +444,42 @@
         <a href="/Assest/add.html" class="add" id="agregar">+</a>
     </main>
     <script>
-        let name = sessionStorage.getItem("playName");
         const agregarTarea = document.getElementById("tareaAgregar");
         const vistaTareas = document.getElementById("vistaTareas");
         const btnAgregar = document.getElementById("btnAgregar");  
-
-        
-        if (!name) {
-            name = prompt("¿Cuál es tu nombre?");
-            sessionStorage.setItem("playName", name);
-            try {
-                let json = { Nombre: name };
-                fetch("/kanban/nuevo", {
-                    method: "POST",
-                    body: JSON.stringify(json),
-                    headers: {
-                        "Content-Type": "application/json"
-                    }
-                });
+        btnAgregar.addEventListener("click", async function ()
+        {
+            const titulo = document.getElementById("titulo").value;
+            const descripcion = document.getElementById("descripción").value;
+            const encargado = document.getElementById("Encargado").value;
+            if (titulo && descripcion && encargado) {
+                agregarTarea.style.display = "none";
+                vistaTareas.style.display = "block";
+                const task = document.createElement("section");
+                task.className = "task";
+                task.draggable = true;
+                task.id = `task${Math.floor(Math.random() * 1000)}`;
+                task.setAttribute("ondragstart", "drag(event)");
+                task.innerHTML = `
+                    <h4>${titulo}</h4>
+                    <h6>${new Date().toLocaleDateString()}</h6>
+                    <p>${descripcion}</p>
+                    <a href="#"><i class="fa fa-trash" aria-hidden="true"></i></a>
+                `;
+                document.getElementById("todo").appendChild(task);
+            } else {
+                alert("Por favor, completa todos los campos.");
             }
-            catch (error) {
-                console.log(error);
-                alert(error);
-            }
-        }
-       
-           btnAgregar.addEventListener("click", agregarNota);  
-
-           function agregarNota() {  
-               let titulo = document.getElementById("titulo").value;  
-               let descripcion = document.getElementById("descripción").value;  
-               let encargado = document.getElementById("Encargado").value;  
-               let json = { Titulo: titulo, Descripcion: descripcion, Encargado: encargado };  
-
-               fetch("/kanban/nuevaTarea", {
-                   method: "POST",
-                   body: JSON.stringify(json),
-                   headers: {
-                       "Content-Type": "application/json"
-                   }
-               })
-                   .then(response => {
-                       if (!response.ok) {
-                     
-                           return response.text().then(text => {
-                               throw new Error(`Error del servidor: ${text}`);
-                           });
-                       }
-                       return response.json(); 
-                   })
-                   .then(data => {
-                       console.log(data); 
-                   })
-                   .catch(error => {
-                       console.error("Error en la solicitud:", error.message); 
-                   });  
-           }  
-
-            //tabla
-            function allowDrop(event) {
-                event.preventDefault();
- }
-            function drag(event) {
-                event.dataTransfer.setData("text", event.target.id);
- }
-            function drop(event) {
-                event.preventDefault();
+        });
+        //tabla
+        function allowDrop(event) {event.preventDefault();}
+        function drag(event) { event.dataTransfer.setData("text", event.target.id);}
+        function drop(event)
+        {
+            event.preventDefault();
             var data = event.dataTransfer.getData("text");
             event.target.appendChild(document.getElementById(data));
- }
+        }
         </script>
 </body>
 </html>
