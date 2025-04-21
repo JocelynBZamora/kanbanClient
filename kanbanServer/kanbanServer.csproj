@@ -17,6 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Assest\add.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Assest\Index.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

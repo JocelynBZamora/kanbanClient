@@ -412,11 +412,26 @@
             <a href="#">Cerrar</a>
         </nav>
     </header>
-    <main>
+    <section class="card"  id="tareaAgregar">
+        <label for="titulo">Título de la tarea:</label>
+        <input type="text" name="titulo" id="titulo" placeholder="Título de la tarea">
+        <label for="descripción">Descripción de la tarea:</label>
+        <input type="text" name="descripción" id="descripción" placeholder="Descripción de la tarea">
+        <label for="Encargado">Encargado:</label>
+        <input type="text" name="Encargado" id="Encargado" placeholder="Nombre del encargado">
+        <div class="buttons">
+            <button>Cancelar</button>
+            <!-- <button class="eliminar">Eliminar</button> -->
+            <button id="btnAgregar">Agregar</button>
+
+        </div>
+    </section>
+    <main style="display:none;" id="vistaTareas">
+
         <div class="kanban">
             <div class="column" id="todo" ondrop="drop(event)" ondragover="allowDrop(event)">
                 <h3>Pendiente</h3>
-               
+
 
             </div>
             <div class="column" id="inprogress" ondrop="drop(event)" ondragover="allowDrop(event)">
@@ -426,17 +441,19 @@
                 <h3>Completado</h3>
             </div>
         </div>
-        <a href="#" class="add" id="agregar">+</a>
+        <a href="/Assest/add.html" class="add" id="agregar">+</a>
     </main>
     <script>
-
         let name = sessionStorage.getItem("playName");
-        document.getElementById("agregar").addEventListener("click",agregarNota)
+        const agregarTarea = document.getElementById("tareaAgregar");
+        const vistaTareas = document.getElementById("vistaTareas");
+        const btnAgregar = document.getElementById("btnAgregar");  
+
+        
         if (!name) {
             name = prompt("¿Cuál es tu nombre?");
             sessionStorage.setItem("playName", name);
-            try
-            {
+            try {
                 let json = { Nombre: name };
                 fetch("/kanban/nuevo", {
                     method: "POST",
@@ -446,38 +463,56 @@
                     }
                 });
             }
-              catch (error) {
-                  console.log(error);
-                  alert(error);
-              }
+            catch (error) {
+                console.log(error);
+                alert(error);
+            }
         }
-        function agregarNota() {
-            let task = document.createElement("section");
-            task.className = "task";
-            task.draggable = true;
-            task.ondragstart = drag;
-            task.id = "task" + (document.querySelectorAll(".task").length + 1);
-            task.innerHTML = `
-                <h4>Título de la Tarjeta</h4>
-                <h6>Fecha de creación</h6>
-                <p>Descripción de la tarjeta.</p>
-                <a href="#"><i class="fa fa-trash" aria-hidden="true"></i></a>
-            `;
-            document.getElementById("todo").appendChild(task);
-        }
-        //tabla
-        function allowDrop(event) {
-            event.preventDefault();
-        }
-        function drag(event) {
-            event.dataTransfer.setData("text", event.target.id);
-        }
-        function drop(event) {
-            event.preventDefault();
+       
+           btnAgregar.addEventListener("click", agregarNota);  
+
+           function agregarNota() {  
+               let titulo = document.getElementById("titulo").value;  
+               let descripcion = document.getElementById("descripción").value;  
+               let encargado = document.getElementById("Encargado").value;  
+               let json = { Titulo: titulo, Descripcion: descripcion, Encargado: encargado };  
+
+               fetch("/kanban/nuevaTarea", {
+                   method: "POST",
+                   body: JSON.stringify(json),
+                   headers: {
+                       "Content-Type": "application/json"
+                   }
+               })
+                   .then(response => {
+                       if (!response.ok) {
+                           // Si la respuesta no es exitosa, lanza un error con el texto de la respuesta
+                           return response.text().then(text => {
+                               throw new Error(`Error del servidor: ${text}`);
+                           });
+                       }
+                       return response.json(); // Analiza la respuesta como JSON si es exitosa
+                   })
+                   .then(data => {
+                       console.log(data); // Maneja la respuesta exitosa
+                   })
+                   .catch(error => {
+                       console.error("Error en la solicitud:", error.message); // Maneja errores
+                   });  
+           }  
+
+            //tabla
+            function allowDrop(event) {
+                event.preventDefault();
+ }
+            function drag(event) {
+                event.dataTransfer.setData("text", event.target.id);
+ }
+            function drop(event) {
+                event.preventDefault();
             var data = event.dataTransfer.getData("text");
             event.target.appendChild(document.getElementById(data));
-        }
-        
-    </script>
+ }
+        </script>
 </body>
 </html>
