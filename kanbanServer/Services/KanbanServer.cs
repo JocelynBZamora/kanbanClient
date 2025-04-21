@@ -15,7 +15,7 @@ namespace kanbanServer.Services
     {
         HttpListener servidorbb = new HttpListener();
         byte[] TareaIndex;
-        public event Action<ListaTareasDTO>? Tarearesibida, TareaTerminada, TareaProseso, TareaEn;
+        public event Action<ListaTareasDTO>? Tarearesibida, TareaTerminada, TareaProseso, actualizar,eliminar;
         public KanbanServer() { TareaIndex = File.ReadAllBytes("assest/index.html"); }
         public void Iniciar()
         {
@@ -57,11 +57,11 @@ namespace kanbanServer.Services
                         case "/kanban/nuevo":
                             Tareas(context, Tarearesibida, null);
                             break;
-                        case "/kanban/pendiente":
+                        case "/kanban/actualizar":
                             Tareas(context, TareaProseso, EstadoTarea.Pendiente);
                             break;
-                        case "/kanban/en":
-                            Tareas(context, TareaEn, EstadoTarea.EnProgreso);
+                        case "/kanban/eliminar":
+                            Tareas(context, eliminar, EstadoTarea.EnProgreso);
                             break;
                         case "/kanban/terminada":
                             Tareas(context, TareaTerminada, EstadoTarea.Terminada);
