@@ -526,13 +526,35 @@
                     },
                     body: JSON.stringify(updateData)
                 });
-
                 if (!response.ok) {
                     alert("Error al actualizar la tarea en el servidor.");
                 }
-            } catch (error) {
-                console.error("Error:", error);
-                alert("Ocurrió un error al actualizar la tarea.");
+                else {
+                    if (columnId === "done") {
+                        tareaTerminada(data); 
+                    }
+                }
+            }
+            catch (error) { }
+        }
+        function tareaTerminada(taskId) {
+            const taskElement = document.getElementById(taskId);
+            const doneColumn = document.getElementById("done");
+
+            if (taskElement && doneColumn.contains(taskElement)) {
+                taskElement.draggable = false;
+                taskElement.style.cursor = "not-allowed";
+                try {
+                    fetch('/kanban/terminada', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ taskId: taskId })
+                    }).then(response => {
+
+                    });
+                } catch (error) { }
             }
         }
         function eliminarTarea(taskId)
@@ -566,7 +588,7 @@
             agregarTarea.style.display = "none";
            
         });
-
+       
     </script>
 </body>
 </html>
