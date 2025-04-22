@@ -420,7 +420,7 @@
         <label for="Encargado">Encargado:</label>
         <input type="text" name="Encargado" id="Encargado" placeholder="Nombre del encargado">
         <div class="buttons">
-            <button>Cancelar</button>
+            <button id="btnCancelar">Cancelar</button>
             <!-- <button class="eliminar">Eliminar</button> -->
             <button id="btnAgregar">Agregar</button>
 
@@ -448,6 +448,7 @@
         const vistaTareas = document.getElementById("vistaTareas");
         const btnAgregar = document.getElementById("btnAgregar");
         const agregar = document.getElementById("agregar");
+        const btnCancelar = document.getElementById("btnCancelar");
 
         btnAgregar.addEventListener("click", async function () {
             const titulo = document.getElementById("titulo").value;
@@ -560,27 +561,11 @@
                 }
             }
         }
-        btncancelar.addEventListener("click", function () {
+        btnCancelar.addEventListener("click", function () {
             vistaTareas.style.display = "block";
             agregarTarea.style.display = "none";
-            if (response.ok) {
-                const task = document.createElement("section");
-                task.className = "task";
-                task.draggable = true;
-                task.id = `task${Math.floor(Math.random() * 1000)}`;
-                task.setAttribute("ondragstart", "drag(event)");
-                task.innerHTML = `
-                       <h4>${titulo}</h4>
-                       <h6>${taskData.fecha}</h6>
-                       <p>${descripcion}</p>
-                       <p>${encargado}</p>
-                       <a class="eliminar fa fa-trash" aria-hidden="true"
-                       onclick="eliminarTarea('${task.id}')"></a>
-                   `;
-                document.getElementById("todo").appendChild(task);
-            }
-            else { alert("Error al enviar los datos al servidor."); }
-        } 
+           
+        });
 
     </script>
 </body>
