@@ -366,42 +366,8 @@
                 background-color: #007bff;
             }
 
-        /*.eliminar {
-            background: rgb(250, 54, 54);
-        }*/
-        /*login*/
-        .login {
-            display: grid;
-            align-items: center;
-            /* height: 50vh;
-            width: 40vw; */
-            border-radius: 5px;
-            background-color: #007bff;
-            color: white;
-            padding: 20px;
-        }
-
-            .login input {
-                padding: 5px;
-                margin: 10px;
-            }
-
-            .login h2 {
-                text-align: center;
-            }
-
-            .login label {
-                padding: 10px;
-                font-size: 1.1rem;
-            }
-
-            .login button {
-                width: 20vw;
-                margin: 10px;
-                padding: 5px;
-                background-color: #0061c9;
-                color: white;
-            }
+     
+      
     </style>
 </head>
 <body class="body">
@@ -509,7 +475,14 @@
             document.getElementById("Encargado").value = "";
         });
         function allowDrop(event) { event.preventDefault(); }
-        function drag(event) { event.dataTransfer.setData("text", event.target.id); }
+        function drag(event) {
+            event.dataTransfer.setData("text", event.target.id);
+            if (event.target.parentElement.id === "done") {
+                
+                event.preventDefault();
+                return;
+            }
+        }
         async function drop(event) {
             event.preventDefault();
             const data = event.dataTransfer.getData("text");
