@@ -35,7 +35,7 @@ namespace kanbanServer.ViewModels
                     ProcessStartInfo p = new ProcessStartInfo
                     {
                         FileName = "netsh.exe",
-                        Arguments = "http add urlacl url=http://*:19800/kanban/ user=Everyone",
+                        Arguments = "http add urlacl url=http://*:19800/kanban/ user=Todos",
                         UseShellExecute = true,
                         CreateNoWindow = false,
                         Verb = "runas"

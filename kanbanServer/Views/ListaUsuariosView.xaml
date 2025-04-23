@@ -1,0 +1,74 @@
+﻿<UserControl x:Class="kanbanServer.Views.ListaUsuariosView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:kanbanServer.Views" xmlns:models="clr-namespace:kanbanServer.Models" d:DataContext="{d:DesignInstance Type=models:ListaTareasDTO}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <DockPanel>
+        <TextBlock DockPanel.Dock="Top"
+            Text="Lista de Usuarios" FontSize="20"
+            FontWeight="Bold" 
+             Margin="10"
+            Foreground="Coral"
+            TextAlignment="Center"/>
+        <DataGrid x:Name="dataGridUsuarios" AutoGenerateColumns="False" 
+          ItemsSource="{Binding ListaTareasDTO}"
+          CanUserAddRows="False"
+          CanUserDeleteRows="False"
+          CanUserReorderColumns="False"
+          CanUserResizeColumns="True"
+          CanUserResizeRows="False"
+          CanUserSortColumns="True"
+          HeadersVisibility="Column"
+          GridLinesVisibility="Horizontal"
+          AlternatingRowBackground="LightGray"
+          RowBackground="White"
+          Background="White"
+          BorderBrush="Gray"
+          BorderThickness="1"
+          FontSize="14"
+          FontFamily="Segoe UI"
+          Foreground="Black"
+          HorizontalGridLinesBrush="LightGray"
+          VerticalGridLinesBrush="LightGray">
+            <DataGrid.Resources>
+              
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="Background" Value="#007ACC"/>
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="FontWeight" Value="Bold"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                </Style>
+
+              
+                <Style TargetType="DataGridRow">
+                    <Setter Property="FontSize" Value="14"/>
+                    <Setter Property="FontFamily" Value="Segoe UI"/>
+                    <Setter Property="Height" Value="30"/>
+                    <Setter Property="Cursor" Value="Hand"/>
+                    <Setter Property="ToolTip" Value="Doble clic para editar"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#D0E9FF"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.Resources>
+            <DataGrid.Columns>
+            <DataGridTextColumn 
+                Width="1*"
+                Header="Nombre" 
+                Binding="{Binding Encargado}"/>
+            <DataGridTextColumn
+                Width="1*"
+                Header="Fecha" 
+                Binding="{Binding FechaCreacion}"/>
+            <DataGridTextColumn Width="2*"
+                Header="Descripción de la tarea" 
+                Binding="{Binding  Descrip}"/>
+        </DataGrid.Columns>
+    </DataGrid>
+    </DockPanel>
+</UserControl>

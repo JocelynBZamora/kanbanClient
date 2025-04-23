@@ -13,10 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="Assest\add.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
