@@ -473,7 +473,14 @@
             document.getElementById("Encargado").value = "";
         });
         function allowDrop(event) { event.preventDefault(); }
-        function drag(event) { event.dataTransfer.setData("text", event.target.id); }
+        function drag(event) {
+            event.dataTransfer.setData("text", event.target.id);
+            if (event.target.parentElement.id === "done") {
+                
+                event.preventDefault();
+                return;
+            }
+        }
         async function drop(event) {
             event.preventDefault();
             const data = event.dataTransfer.getData("text");
