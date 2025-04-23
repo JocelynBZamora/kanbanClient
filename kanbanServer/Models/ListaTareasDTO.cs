@@ -16,8 +16,8 @@ namespace kanbanServer.Models
     public class ListaTareasDTO: Usuario, INotifyPropertyChanged
     {
         public int Id { get; set; }
-        private object? descrip;
-        public object? Descrip
+        private string? descrip;
+        public string? Descrip
         {
             get { return descrip; }
             set
@@ -37,7 +37,7 @@ namespace kanbanServer.Models
             }
         }
        private string? titulo;
-        public string Titulo
+        public string? Titulo
         {
             get { return titulo; }
             set

@@ -85,12 +85,11 @@ namespace kanbanServer.Services
                 context.Request.InputStream.Read(buffernombre, 0, buffernombre.Length);
                 string json = Encoding.UTF8.GetString(buffernombre);
 
-                ListaTareasDTO usuario =JsonSerializer.Deserialize<ListaTareasDTO>(json);
-
+                var usuario =JsonSerializer.Deserialize<ListaTareasDTO>(json);
                 if (usuario != null)
                 {
                     usuario.FechaCreacion = DateTime.Now;
-                    usuario.Ip = context.Request.RemoteEndPoint?.ToString() ?? "Desconocida";
+                    //usuario.Ip = context.Request.RemoteEndPoint?.ToString() ?? "Desconocida";
                     if (e != null)
                     {
                         usuario.Estado = e.Value;
