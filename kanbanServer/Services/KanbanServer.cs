@@ -79,21 +79,36 @@ namespace kanbanServer.Services
         }
         private void Tareas(HttpListenerContext context, Action<ListaTareasDTO>? tarearesibida, EstadoTarea? e)
         {
-            byte[] buffernombre = new byte[context.Request.ContentLength64];
-            context.Request.InputStream.Read(buffernombre, 0, buffernombre.Length);
-            string json = Encoding.UTF8.GetString(buffernombre);
-
-            var usuario = JsonSerializer.Deserialize<ListaTareasDTO>(json);
-
-            if (usuario != null)
+            try
             {
-                usuario.FechaCreacion = DateTime.Now;
-                usuario.Ip = context.Request.RemoteEndPoint.ToString();
-                if (e != null)
+                byte[] buffernombre = new byte[context.Request.ContentLength64];
+                context.Request.InputStream.Read(buffernombre, 0, buffernombre.Length);
+                string json = Encoding.UTF8.GetString(buffernombre);
+
+                ListaTareasDTO usuario =JsonSerializer.Deserialize<ListaTareasDTO>(json);
+
+                if (usuario != null)
                 {
-                    usuario.Estado = e.Value;
+                    usuario.FechaCreacion = DateTime.Now;
+                    usuario.Ip = context.Request.RemoteEndPoint?.ToString() ?? "Desconocida";
+                    if (e != null)
+                    {
+                        usuario.Estado = e.Value;
+                    }
+                    tarearesibida?.Invoke(usuario);
                 }
-                tarearesibida?.Invoke(usuario);
+                else
+                {
+                    Console.WriteLine("Error: No se pudo deserializar el objeto JSON.");
+                }
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"Error de deserialización: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error general: {ex.Message}");
             }
         }
         public void Detener()

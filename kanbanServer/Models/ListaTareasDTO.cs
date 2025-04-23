@@ -16,8 +16,36 @@ namespace kanbanServer.Models
     public class ListaTareasDTO: Usuario, INotifyPropertyChanged
     {
         public int Id { get; set; }
-        public string Descrip { get; set; } = "";
-        public DateTime FechaCreacion { get; set; }
+        private object? descrip;
+        public object? Descrip
+        {
+            get { return descrip; }
+            set
+            {
+                descrip = value;
+                PropertyChanged?.Invoke(this, new(nameof(Descrip)));
+            }
+        }
+        private DateTime fechaCreacion;
+        public DateTime FechaCreacion
+        {
+            get { return fechaCreacion; }
+            set
+            {
+                fechaCreacion = value;
+                PropertyChanged?.Invoke(this, new(nameof(FechaCreacion)));
+            }
+        }
+       private string? titulo;
+        public string Titulo
+        {
+            get { return titulo; }
+            set
+            {
+                titulo = value;
+                PropertyChanged?.Invoke(this, new(nameof(Titulo)));
+            }
+        }
         private EstadoTarea estado;
         public EstadoTarea Estado
         {

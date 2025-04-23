@@ -65,7 +65,9 @@
                 Width="1*"
                 Header="Fecha" 
                 Binding="{Binding FechaCreacion}"/>
-            <DataGridTextColumn Width="2*"
+                <DataGridTextColumn Binding="{Binding Titulo}"
+                    Width="1*" Header="Titulo"/>
+                <DataGridTextColumn Width="2*"
                 Header="Descripción de la tarea" 
                 Binding="{Binding  Descrip}"/>
         </DataGrid.Columns>
