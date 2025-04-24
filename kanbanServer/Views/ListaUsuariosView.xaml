@@ -69,8 +69,8 @@
                 <DataGridTextColumn Binding="{Binding Titulo}"
                     Width="1*" Header="Titulo"/>
                 <DataGridTextColumn Width="2*"
-                Header="Descripción de la tarea" 
-                Binding="{Binding  Descrip}"/>
+                Header="Estado de la tarea" 
+                Binding="{Binding  Estado}"/>
         </DataGrid.Columns>
     </DataGrid>
     </DockPanel>
