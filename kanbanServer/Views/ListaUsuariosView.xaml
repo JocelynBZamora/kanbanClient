@@ -58,11 +58,11 @@
                 </Style>
             </DataGrid.Resources>
             <DataGrid.Columns>
-            <DataGridTextColumn 
+                <DataGridTextColumn 
                 Width="1*"
                 Header="Nombre" 
-                />
-            <DataGridTextColumn
+                Binding="{Binding Encargado}"/>
+                <DataGridTextColumn
                 Width="1*"
                 Header="Fecha" 
                 Binding="{Binding FechaCreacion}"/>

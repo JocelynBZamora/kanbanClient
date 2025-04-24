@@ -10,7 +10,6 @@
         Title="MainWindow" Height="450" Width="800">
     <Window.DataContext>
         <viewmodels:KanbanViewModels></viewmodels:KanbanViewModels>
-        
     </Window.DataContext>
     <Grid Background="#f4f4f4">
         <Grid.RowDefinitions>

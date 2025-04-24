@@ -1,4 +1,5 @@
 ﻿using kanbanServer.Models;
+using kanbanServer.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -53,7 +54,6 @@ namespace kanbanServer.Services
                 {
                     switch (context.Request.RawUrl)
                     {
-                        //me va  a traer el nombre del usuario, ip y su tarea
                         case "/kanban/nuevo":
                             Tareas(context, Tarearesibida, null);
                             break;
@@ -85,11 +85,15 @@ namespace kanbanServer.Services
                 context.Request.InputStream.Read(buffernombre, 0, buffernombre.Length);
                 string json = Encoding.UTF8.GetString(buffernombre);
 
-                var usuario =JsonSerializer.Deserialize<ListaTareasDTO>(json);
+                var usuario = JsonSerializer.Deserialize<ListaTareasDTO>(json);
                 if (usuario != null)
                 {
                     usuario.FechaCreacion = DateTime.Now;
-                    //usuario.Ip = context.Request.RemoteEndPoint?.ToString() ?? "Desconocida";
+                    //usuario.Encargado = context.Request.ToString();
+                    //usuario.Titulo = context.Request.ToString();
+                    //usuario.Descrip = context.Request.ToString();
+                    usuario.Ip = context.Request.RemoteEndPoint.ToString(); 
+
                     if (e != null)
                     {
                         usuario.Estado = e.Value;

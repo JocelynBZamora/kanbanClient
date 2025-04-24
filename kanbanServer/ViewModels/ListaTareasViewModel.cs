@@ -16,32 +16,38 @@ namespace kanbanServer.ViewModels
         public ObservableCollection<ListaTareasDTO> Tareas { get; set; }
         public ListaTareasViewModel()
         {
-
             Tareas = new();
             ComunicacionHelper.Tarearesibida += (tarea) =>
             {
-                Tareas.Add(tarea);
+                if (tarea != null && !string.IsNullOrEmpty(tarea.Titulo))
+                {
+                    Tareas.Add(tarea);
+                }
             };
-
             ComunicacionHelper.TareaProseso += (tarea) =>
             {
-
-                Tareas.Where(x => x.Titulo == tarea.Titulo).First().Estado = (EstadoTarea)1;
-
+                var tareaExistente = Tareas.FirstOrDefault(x => x.Titulo == tarea.Titulo);
+                if (tareaExistente != null)
+                {
+                    tareaExistente.Estado = (EstadoTarea)1;
+                }
             };
+
             ComunicacionHelper.eliminar += (tarea) =>
             {
                 try
                 {
-                    Tareas.Remove(Tareas.Where(x => x.Titulo == tarea.Titulo).First());
-
+                    var tareaAEliminar = Tareas.FirstOrDefault(x => x.Titulo == tarea.Titulo);
+                    if (tareaAEliminar != null)
+                    {
+                        Tareas.Remove(tareaAEliminar);
+                    }
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
                 }
             };
-
         }
         public event PropertyChangedEventHandler? PropertyChanged;
     }
