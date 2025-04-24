@@ -3,9 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vm="clr-namespace:kanbanServer.ViewModels"
              xmlns:local="clr-namespace:kanbanServer.Views" 
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.DataContext>
+        <vm:ListaTareasViewModel></vm:ListaTareasViewModel>
+    </UserControl.DataContext>
     <DockPanel>
         <TextBlock DockPanel.Dock="Top"
             Text="Lista de Usuarios" FontSize="20"
@@ -14,7 +18,7 @@
             Foreground="Coral"
             TextAlignment="Center"/>
         <DataGrid x:Name="dataGridUsuarios" AutoGenerateColumns="False" 
-          ItemsSource="{Binding ListaTareasDTO}"
+          ItemsSource="{Binding Tareas}"
           CanUserAddRows="False"
           CanUserDeleteRows="False"
           CanUserReorderColumns="False"
@@ -57,7 +61,7 @@
             <DataGridTextColumn 
                 Width="1*"
                 Header="Nombre" 
-                Binding="{Binding Encargado}"/>
+                />
             <DataGridTextColumn
                 Width="1*"
                 Header="Fecha" 
