@@ -417,9 +417,10 @@
         const btnCancelar = document.getElementById("btnCancelar");
 
         btnAgregar.addEventListener("click", async function () {  
-           const titulo = document.getElementById("titulo").value;  
-           const descripcion = document.getElementById("descripción").value;  
-           const encargado = document.getElementById("encargado").value;  
+           const titulo = document.getElementById("titulo").value.trim();  
+           const descripcion = document.getElementById("descripción").value.trim();  
+           const encargado = document.getElementById("encargado").value.trim();  
+
            if (titulo && descripcion && encargado) {  
                agregarTarea.style.display = "none";  
                vistaTareas.style.display = "block";  
@@ -430,6 +431,7 @@
                    Encargado: encargado,  
                    FechaCreacion: new Date().toISOString()  
                };  
+
                try {  
                    const response = await fetch('/kanban/nuevo', {  
                        method: 'POST',  
@@ -440,22 +442,23 @@
                    });  
 
                    if (response.ok) {  
-                       const task = document.createElement("section");  
+                       const taskId = await response.text();  
+                       const task = document.createElement("div");  
                        task.className = "task";  
+                       task.id = `task${Math.floor(Math.random() * 1000)}`;
                        task.draggable = true;  
-                       task.id = `task${Math.floor(Math.random() * 1000)}`;  
-                       task.setAttribute("ondragstart", "drag(event)");  
+                       task.ondragstart = drag;  
                        task.innerHTML = `  
-                             <h4>${titulo}</h4>  
-                             <h6>${taskData.FechaCreacion}</h6>  
-                             <p>${descripcion}</p>  
-                             <p>${encargado}</p>  
-                             <a class="eliminar fa fa-trash" aria-hidden="true"  
-                             onclick="eliminarTarea('${task.id}')"></a>  
-                         `;  
+                           <h4>${titulo}</h4>
+                              <h6>${taskData.fecha}</h6>
+                              <p>${descripcion}</p>
+                              <p>${encargado}</p>
+                              <a class="eliminar fa fa-trash" aria-hidden="true"
+                              onclick="eliminarTarea('${task.id}')"></a>  
+                       `;  
                        document.getElementById("todo").appendChild(task);  
                    } else {  
-                       const errorText = await response.text(); // Obtener el mensaje de error del servidor  
+                       const errorText = await response.text();  
                        console.error("Error del servidor:", errorText);  
                        alert("Error al enviar los datos al servidor: " + errorText);  
                    }  
@@ -532,8 +535,7 @@
                 } catch (error) { }
             }
         }
-        function eliminarTarea(taskId)
-        {
+        function eliminarTarea(taskId) {
             const confirmacion = confirm("¿Estás seguro de que deseas eliminar esta tarea?");
             if (confirmacion) {
                 const taskElement = document.getElementById(taskId);
