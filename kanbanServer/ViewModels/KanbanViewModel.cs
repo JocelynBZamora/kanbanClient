@@ -25,7 +25,8 @@ namespace kanbanServer.ViewModels
             serverbb.TareaTerminada += Serverbb_TareaTerminada;
             serverbb.TareaProseso += Serverbb_TareaProseso;
             serverbb.eliminar += Serverbb_Eliminar;
-            serverbb.TareaPendiente += Serverbb_Pendiente;
+            //serverbb.actualizar += Serverbb_Actualizar;
+
             if (!File.Exists("assest/ListaTareas.json"))
             {
                 Directory.CreateDirectory("assest");
@@ -48,6 +49,7 @@ namespace kanbanServer.ViewModels
                 listaTareas.Tareas.ForEach(t => Tareas.Add(t));
             }
         }
+
         private void Serverbb_Tarearesibida(ListaTareasDTO lista)
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -55,7 +57,7 @@ namespace kanbanServer.ViewModels
                 bool cambiosRealizados = false;
 
                 foreach (var nuevaTarea in lista.Tareas)
-                { 
+                {
                     nuevaTarea.Id = listaTareas.Tareas.Count > 0 ? listaTareas.Tareas.Max(t => t.Id) + 1 : 1;
                     listaTareas.Tareas.Add(nuevaTarea);
                     Tareas.Add(nuevaTarea);
@@ -75,6 +77,7 @@ namespace kanbanServer.ViewModels
                 }
             });
         }
+
 
         private void Serverbb_TareaTerminada(ListaTareasDTO lista)
         {
@@ -106,6 +109,7 @@ namespace kanbanServer.ViewModels
                 }
             });
         }
+
         private void Serverbb_TareaProseso(ListaTareasDTO lista)
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -119,59 +123,28 @@ namespace kanbanServer.ViewModels
                     }
                     else
                     {
-                        tarea.Estado = EstadoTareas.EnProgreso;
                         Tareas.Add(tarea);
                     }
-                }
-
-                // Serializa y guarda el archivo JSON
-                try
-                {
-                    var json = JsonSerializer.Serialize(listaTareas, new JsonSerializerOptions { WriteIndented = true });
-                    File.WriteAllText("assest/ListaTareas.json", json);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error al guardar el archivo JSON: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    // Serializa y guarda el archivo JSON
+                    try
+                    {
+                        var json = JsonSerializer.Serialize(listaTareas, new JsonSerializerOptions { WriteIndented = true });
+                        File.WriteAllText("assest/ListaTareas.json", json);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error al guardar el archivo JSON: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
             });
         }
 
-        private void Serverbb_Pendiente(ListaTareasDTO lista)
-        {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                foreach (var tarea in lista.Tareas)
-                {
-                    var tareaExistente = Tareas.FirstOrDefault(t => t.Id == tarea.Id);
-                    if (tareaExistente != null)
-                    {
-                        tareaExistente.Estado = EstadoTareas.Pendiente;
-                    }
-                    else
-                    {
-                        tarea.Estado = EstadoTareas.Pendiente;
-                        Tareas.Add(tarea);
-                    }
-                }
-
-                // Serializa y guarda el archivo JSON
-                try
-                {
-                    var json = JsonSerializer.Serialize(listaTareas, new JsonSerializerOptions { WriteIndented = true });
-                    File.WriteAllText("assest/ListaTareas.json", json);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error al guardar el archivo JSON: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            });
-        }
         private void Serverbb_Eliminar(ListaTareasDTO lista)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                foreach (var tarea in lista.Tareas)
+                listaTareas = lista;
+                foreach (var tarea in listaTareas.Tareas)
                 {
                     var tareaExistente = Tareas.FirstOrDefault(t => t.Id == tarea.Id);
                     if (tareaExistente != null)
@@ -180,18 +153,12 @@ namespace kanbanServer.ViewModels
                     }
                 }
 
-                // Serializa y guarda el archivo JSON
-                try
-                {
-                    var json = JsonSerializer.Serialize(listaTareas, new JsonSerializerOptions { WriteIndented = true });
-                    File.WriteAllText("assest/ListaTareas.json", json);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error al guardar el archivo JSON: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
             });
         }
-    }
+
        
+    }
 }
+
+
+
