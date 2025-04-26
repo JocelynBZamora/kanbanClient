@@ -24,7 +24,7 @@ namespace kanbanServer.Services
             new Thread(Escuchar) { IsBackground = true }.Start();
         }
 
-        public event Action<ListaTareasDTO>? Tarearesibida, TareaTerminada, TareaProseso, actualizar, eliminar;
+        public event Action<ListaTareasDTO>? Tarearesibida, TareaTerminada, TareaProseso, TareaPendiente, eliminar;
 
         void Escuchar()
         {
@@ -56,14 +56,17 @@ namespace kanbanServer.Services
                         case "/kanban/nuevo":
                             LeerTareas(context, Tarearesibida, null);
                             break;
-                        case "/kanban/actualizar":
+                        case "/kanban/pendiente":
                             LeerTareas(context, TareaProseso, EstadoTareas.Pendiente);
                             break;
-                        case "/kanban/eliminar":
+                        case "/kanban/enprogreso":
                             LeerTareas(context, eliminar, EstadoTareas.EnProgreso);
                             break;
                         case "/kanban/terminada":
                             LeerTareas(context, TareaTerminada, EstadoTareas.Terminada);
+                            break;
+                        case "/kanban/eliminar":
+                            LeerTareas(context,eliminar, EstadoTareas.Terminada);
                             break;
                         default:
                             context.Response.StatusCode = (int)HttpStatusCode.NotFound;

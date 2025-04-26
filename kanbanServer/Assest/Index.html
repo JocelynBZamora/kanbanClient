@@ -497,7 +497,7 @@
                 newColumn: columnId
             };
             try {
-                const response = await fetch('/kanban/actualizar', {
+                const response = await fetch('/kanban/pendiente', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -535,31 +535,36 @@
                 } catch (error) { }
             }
         }
-        function eliminarTarea(taskId) {
-            const confirmacion = confirm("¿Estás seguro de que deseas eliminar esta tarea?");
-            if (confirmacion) {
-                const taskElement = document.getElementById(taskId);
-                if (taskElement) {
-                    taskElement.remove();
-                    try {
-                        fetch('/kanban/eliminar', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({ taskId: taskId })
-                        }).then(response => {
-                            if (!response.ok) {
-                                alert("Error al eliminar la tarea en el servidor.");
-                            }
-                        });
-                    } catch (error) {
-                        console.error("Error:", error);
-                        alert("Ocurrió un error al eliminar la tarea.");
-                    }
-                }
-            }
-        }
+
+        function eliminarTarea(taskId) {  
+                   const taskElement = document.getElementById(taskId);  
+                   const doneColumn = document.getElementById("done");  
+
+                   if (taskElement && doneColumn.contains(taskElement)) {  
+                       const confirmacion = confirm("¿Estás seguro de que deseas eliminar esta tarea?");  
+                       if (confirmacion) {  
+                           taskElement.remove();  
+                           try {  
+                               fetch('/kanban/eliminar', {  
+                                   method: 'POST',  
+                                   headers: {  
+                                       'Content-Type': 'application/json'  
+                                   },  
+                                   body: JSON.stringify({ taskId: taskId })  
+                               }).then(response => {  
+                                   if (!response.ok) {  
+                                       alert("Error al eliminar la tarea en el servidor.");  
+                                   }  
+                               });  
+                           } catch (error) {  
+                               console.error("Error:", error);  
+                               alert("Ocurrió un error al eliminar la tarea.");  
+                           }  
+                       }  
+                   } else {  
+                       alert("Solo se pueden eliminar tareas que estén en la columna 'Completado'.");  
+                   }  
+               }
         btnCancelar.addEventListener("click", function () {
             vistaTareas.style.display = "block";
             agregarTarea.style.display = "none";

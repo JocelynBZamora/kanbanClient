@@ -25,7 +25,7 @@ namespace kanbanServer.ViewModels
             serverbb.TareaTerminada += Serverbb_TareaTerminada;
             serverbb.TareaProseso += Serverbb_TareaProseso;
             serverbb.eliminar += Serverbb_Eliminar;
-            serverbb.actualizar += Serverbb_Actualizar;
+            serverbb.TareaPendiente += Serverbb_Pendiente;
 
             if (!File.Exists("assest/ListaTareas.json"))
             {
@@ -49,7 +49,7 @@ namespace kanbanServer.ViewModels
                 listaTareas.Tareas.ForEach(t => Tareas.Add(t));
             }
         }
-
+        
         private void Serverbb_Tarearesibida(ListaTareasDTO lista)
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -57,14 +57,12 @@ namespace kanbanServer.ViewModels
                 bool cambiosRealizados = false;
 
                 foreach (var nuevaTarea in lista.Tareas)
-                {
-                    // Permitir agregar tareas incluso si tienen un nombre diferente  
+                { 
+                    nuevaTarea.Id = listaTareas.Tareas.Count > 0 ? listaTareas.Tareas.Max(t => t.Id) + 1 : 1;
                     listaTareas.Tareas.Add(nuevaTarea);
                     Tareas.Add(nuevaTarea);
                     cambiosRealizados = true;
                 }
-
-                // Guardar la lista actualizada en el archivo JSON solo si hubo cambios  
                 if (cambiosRealizados)
                 {
                     try
@@ -106,9 +104,30 @@ namespace kanbanServer.ViewModels
                 foreach (var tarea in lista.Tareas)
                 {
                     var tareaExistente = Tareas.FirstOrDefault(t => t.Id == tarea.Id);
+                    var estado = EstadoTareas.EnProgreso; // Variable temporal con estado por defecto "En Progreso"  
+
                     if (tareaExistente != null)
                     {
-                        tareaExistente.Estado = EstadoTareas.EnProgreso;
+                        tareaExistente.Estado = estado;
+                    }
+                    else
+                    {
+                        tarea.Estado = estado;
+                        Tareas.Add(tarea);
+                    }
+                }
+            });
+        }
+        private void Serverbb_Pendiente(ListaTareasDTO lista)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                foreach (var tarea in lista.Tareas)
+                {
+                    var tareaExistente = Tareas.FirstOrDefault(t => t.Id == tarea.Id);
+                    if (tareaExistente != null)
+                    {
+                        tareaExistente.Estado = EstadoTareas.Pendiente;
                     }
                     else
                     {
@@ -117,7 +136,6 @@ namespace kanbanServer.ViewModels
                 }
             });
         }
-
         private void Serverbb_Eliminar(ListaTareasDTO lista)
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -135,21 +153,6 @@ namespace kanbanServer.ViewModels
             });
         }
 
-        private void Serverbb_Actualizar(ListaTareasDTO lista)
-        {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                listaTareas = lista;
-                Tareas.Clear();
-                foreach (var item in listaTareas.Tareas)
-                {
-                    Tareas.Add(item);
-                }
-            });
-        }
+
     }
 }
-   
-
-
-
