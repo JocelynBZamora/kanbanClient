@@ -28,8 +28,8 @@ namespace kanbanServer.Models
                 PropertyChanged?.Invoke(this, new(nameof(Descrip)));
             }
         }
-        private DateTime fechaCreacion;
-        public DateTime FechaCreacion
+        private DateTime? fechaCreacion;
+        public DateTime? FechaCreacion
         {
             get { return fechaCreacion; }
             set

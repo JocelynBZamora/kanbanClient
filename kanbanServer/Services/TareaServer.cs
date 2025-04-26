@@ -53,7 +53,7 @@ namespace kanbanServer.Services
                 {
                     switch (context.Request.RawUrl)
                     {
-                        case "/kanban/nuevo":
+                        case "/kanban/tarearesibida":
                             LeerTareas(context, Tarearesibida, null);
                             break;
                         case "/kanban/pendiente":
