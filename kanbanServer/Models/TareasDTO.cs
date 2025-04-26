@@ -13,11 +13,13 @@ namespace kanbanServer.Models
         Pendiente,
         EnProgreso,
         Terminada,
-        TareaEnviada
+        TareaEnviada,
+        Eliminar
     }
     public  class TareasDTO:Usuario, INotifyPropertyChanged
     {
-        public int Id { get; set; }
+        private string id;
+        public string Id { get { return id; } set { id = value; PropertyChanged?.Invoke(this, new(nameof(Id))); } }
         private string? descrip;
         public string? Descrip
         {

@@ -57,16 +57,19 @@ namespace kanbanServer.Services
                             LeerTareas(context, Tarearesibida, null);
                             break;
                         case "/kanban/pendiente":
-                            LeerTareas(context, TareaProseso, EstadoTareas.Pendiente);
+                            // Aquí actualizamos la tarea específica a pendiente
+                            ActualizarTareaEstado(context, EstadoTareas.Pendiente);
                             break;
                         case "/kanban/enprogreso":
-                            LeerTareas(context, eliminar, EstadoTareas.EnProgreso);
+                            // Actualizar la tarea específica a en progreso
+                            ActualizarTareaEstado(context, EstadoTareas.EnProgreso);
                             break;
                         case "/kanban/terminada":
-                            LeerTareas(context, TareaTerminada, EstadoTareas.Terminada);
+                            // Actualizar la tarea específica a terminada
+                            ActualizarTareaEstado(context, EstadoTareas.Terminada);
                             break;
                         case "/kanban/eliminar":
-                            LeerTareas(context,eliminar, EstadoTareas.Terminada);
+                            LeerTareas(context,eliminar, EstadoTareas.Eliminar);
                             break;
                         default:
                             context.Response.StatusCode = (int)HttpStatusCode.NotFound;
@@ -84,6 +87,57 @@ namespace kanbanServer.Services
             {
                 Console.WriteLine(ex.Message);
             }
+        }
+
+        private void ActualizarTareaEstado(HttpListenerContext context, EstadoTareas e)
+        {
+            //se utilizara para actualizar el estado de la tarea
+            try
+            {
+                byte[] buffernombre = new byte[context.Request.ContentLength64];
+                context.Request.InputStream.Read(buffernombre, 0, buffernombre.Length);
+                string json = Encoding.UTF8.GetString(buffernombre);
+                var tarea = JsonSerializer.Deserialize<TareasDTO>(json);
+                if (tarea != null)
+                {
+                    tarea.FechaCreacion = DateTime.Now;
+                    tarea.Ip = context.Request.RemoteEndPoint.Address.ToString();
+                    tarea.Estado = e;
+                    var listaTareas = new ListaTareasDTO
+                    {
+                        Tareas = new List<TareasDTO> { tarea }
+                    };
+                    switch (e)
+                    {
+                        case EstadoTareas.Pendiente:
+                            TareaPendiente?.Invoke(listaTareas);
+                            break;
+                        case EstadoTareas.EnProgreso:
+                            TareaProseso?.Invoke(listaTareas);
+                            break;
+                        case EstadoTareas.Terminada:
+                            TareaTerminada?.Invoke(listaTareas);
+                            break;
+                        default:
+                            break;
+                    }
+                    context.Response.StatusCode = 200;
+                }
+                else
+                {
+                    context.Response.StatusCode = 400;
+                }
+                context.Response.Close();
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"Error de deserialización: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error general: {ex.Message}");
+            }
+
         }
 
         private void LeerTareas(HttpListenerContext context, Action<ListaTareasDTO>? action, EstadoTareas? e)
@@ -118,10 +172,6 @@ namespace kanbanServer.Services
 
                 context.Response.Close();
             }
-            catch (JsonException ex)
-            {
-                Console.WriteLine($"Error de deserialización: {ex.Message}");
-            }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error general: {ex.Message}");
@@ -135,5 +185,6 @@ namespace kanbanServer.Services
             context.Response.OutputStream.Write(buffer, 0, buffer.Length);
             context.Response.StatusCode = 200;
         }
+        
     }
 }

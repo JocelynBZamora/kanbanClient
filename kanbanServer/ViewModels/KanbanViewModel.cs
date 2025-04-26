@@ -58,7 +58,8 @@ namespace kanbanServer.ViewModels
 
                 foreach (var nuevaTarea in lista.Tareas)
                 {
-                    nuevaTarea.Id = listaTareas.Tareas.Count > 0 ? listaTareas.Tareas.Max(t => t.Id) + 1 : 1;
+
+                     nuevaTarea.Id ??= Guid.NewGuid().ToString();
                     listaTareas.Tareas.Add(nuevaTarea);
                     Tareas.Add(nuevaTarea);
                     cambiosRealizados = true;
@@ -77,8 +78,6 @@ namespace kanbanServer.ViewModels
                 }
             });
         }
-
-
         private void Serverbb_TareaTerminada(ListaTareasDTO lista)
         {
             Application.Current.Dispatcher.Invoke(() =>
