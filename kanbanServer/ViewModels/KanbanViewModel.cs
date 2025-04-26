@@ -25,7 +25,7 @@ namespace kanbanServer.ViewModels
             serverbb.TareaTerminada += Serverbb_TareaTerminada;
             serverbb.TareaProseso += Serverbb_TareaProseso;
             serverbb.eliminar += Serverbb_Eliminar;
-            //serverbb.actualizar += Serverbb_Actualizar;
+            serverbb.TareaPendiente += Serverbb_Pendiente;
 
             if (!File.Exists("assest/ListaTareas.json"))
             {
@@ -123,18 +123,52 @@ namespace kanbanServer.ViewModels
                     }
                     else
                     {
+                        tarea.Estado = EstadoTareas.EnProgreso;
                         Tareas.Add(tarea);
                     }
-                    // Serializa y guarda el archivo JSON
-                    try
+                }
+
+                // Serializa y guarda el archivo JSON
+                try
+                {
+                    var json = JsonSerializer.Serialize(listaTareas, new JsonSerializerOptions { WriteIndented = true });
+                    File.WriteAllText("assest/ListaTareas.json", json);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error al guardar el archivo JSON: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            });
+        }
+
+        private void Serverbb_Pendiente(ListaTareasDTO lista)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                foreach (var tarea in lista.Tareas)
+                {
+                    var tareaExistente = Tareas.FirstOrDefault(t => t.Id == tarea.Id);
+                    if (tareaExistente != null)
                     {
-                        var json = JsonSerializer.Serialize(listaTareas, new JsonSerializerOptions { WriteIndented = true });
-                        File.WriteAllText("assest/ListaTareas.json", json);
+                        tareaExistente.Estado = EstadoTareas.Pendiente;
+
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        MessageBox.Show($"Error al guardar el archivo JSON: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        tarea.Estado = EstadoTareas.Pendiente;
+                        Tareas.Add(tarea);
                     }
+                }
+
+                // Serializa y guarda el archivo JSON
+                try
+                {
+                    var json = JsonSerializer.Serialize(listaTareas, new JsonSerializerOptions { WriteIndented = true });
+                    File.WriteAllText("assest/ListaTareas.json", json);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error al guardar el archivo JSON: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             });
         }
@@ -143,8 +177,8 @@ namespace kanbanServer.ViewModels
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                listaTareas = lista;
-                foreach (var tarea in listaTareas.Tareas)
+                foreach (var tarea in lista.Tareas)
+
                 {
                     var tareaExistente = Tareas.FirstOrDefault(t => t.Id == tarea.Id);
                     if (tareaExistente != null)
@@ -153,12 +187,18 @@ namespace kanbanServer.ViewModels
                     }
                 }
 
+                // Serializa y guarda el archivo JSON
+                try
+                {
+                    var json = JsonSerializer.Serialize(listaTareas, new JsonSerializerOptions { WriteIndented = true });
+                    File.WriteAllText("assest/ListaTareas.json", json);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error al guardar el archivo JSON: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             });
         }
-
-       
     }
+
 }
-
-
-
