@@ -417,58 +417,59 @@
         const btnCancelar = document.getElementById("btnCancelar");
 
         btnAgregar.addEventListener("click", async function () {  
-           const titulo = document.getElementById("titulo").value.trim();  
-           const descripcion = document.getElementById("descripción").value.trim();  
-           const encargado = document.getElementById("encargado").value.trim();  
+          const titulo = document.getElementById("titulo").value.trim();  
+          const descripcion = document.getElementById("descripción").value.trim();  
+          const encargado = document.getElementById("encargado").value.trim();  
 
-           if (titulo && descripcion && encargado) {  
-               agregarTarea.style.display = "none";  
-               vistaTareas.style.display = "block";  
+          if (titulo && descripcion && encargado) {  
+              agregarTarea.style.display = "none";  
+              vistaTareas.style.display = "block";  
 
-               const taskData = {  
-                   Titulo: titulo,  
-                   Descrip: descripcion,  
-                   Encargado: encargado,  
-                   FechaCreacion: new Date().toISOString()  
-               };  
+              const fechaCreacion = new Date().toLocaleString();  
+              const taskData = {  
+                  Titulo: titulo,  
+                  Descrip: descripcion,  
+                  Encargado: encargado,  
+                  FechaCreacion: fechaCreacion  
+              };  
 
-               try {  
-                   const response = await fetch('/kanban/nuevo', {  
-                       method: 'POST',  
-                       headers: {  
-                           'Content-Type': 'application/json'  
-                       },  
-                       body: JSON.stringify(taskData)  
-                   });  
+              try {  
+                  const response = await fetch('/kanban/nuevo', {  
+                      method: 'POST',  
+                      headers: {  
+                          'Content-Type': 'application/json'  
+                      },  
+                      body: JSON.stringify(taskData)  
+                  });  
 
-                   if (response.ok) {  
-                       const taskId = await response.text();  
-                       const task = document.createElement("div");  
-                       task.className = "task";  
-                       task.id = `task${Math.floor(Math.random() * 1000)}`;
-                       task.draggable = true;  
-                       task.ondragstart = drag;  
-                       task.innerHTML = `  
-                           <h4>${titulo}</h4>
-                              <h6>${taskData.fecha}</h6>
-                              <p>${descripcion}</p>
-                              <p>${encargado}</p>
-                              <a class="eliminar fa fa-trash" aria-hidden="true"
-                              onclick="eliminarTarea('${task.id}')"></a>  
-                       `;  
-                       document.getElementById("todo").appendChild(task);  
-                   } else {  
-                       const errorText = await response.text();  
-                       console.error("Error del servidor:", errorText);  
-                       alert("Error al enviar los datos al servidor: " + errorText);  
-                   }  
-               } catch (error) {  
-                   console.error("Error:", error);  
-                   alert("Ocurrió un error al enviar los datos.");  
-               }  
-           } else {  
-               alert("Por favor, completa todos los campos.");  
-           }  
+                  if (response.ok) {  
+                      const taskId = await response.text();  
+                      const task = document.createElement("div");  
+                      task.className = "task";  
+                      task.id = `task${Math.floor(Math.random() * 1000)}`;  
+                      task.draggable = true;  
+                      task.ondragstart = drag;  
+                      task.innerHTML = `  
+                          <h4>${titulo}</h4>  
+                          <h6>${fechaCreacion}</h6>  
+                          <p>${descripcion}</p>  
+                          <p>${encargado}</p>  
+                          <a class="eliminar fa fa-trash" aria-hidden="true"  
+                          onclick="eliminarTarea('${task.id}')"></a>  
+                      `;  
+                      document.getElementById("todo").appendChild(task);  
+                  } else {  
+                      const errorText = await response.text();  
+                      console.error("Error del servidor:", errorText);  
+                      alert("Error al enviar los datos al servidor: " + errorText);  
+                  }  
+              } catch (error) {  
+                  console.error("Error:", error);  
+                  alert("Ocurrió un error al enviar los datos.");  
+              }  
+          } else {  
+              alert("Por favor, completa todos los campos.");  
+          }  
         });
         agregar.addEventListener("click", function () {
             vistaTareas.style.display = "none";
@@ -535,7 +536,6 @@
                 } catch (error) { }
             }
         }
-
         function eliminarTarea(taskId) {  
                    const taskElement = document.getElementById(taskId);  
                    const doneColumn = document.getElementById("done");  
