@@ -8,12 +8,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <DockPanel>
-        <TextBlock DockPanel.Dock="Top"
-            Text="Lista de Usuarios" FontSize="20"
-            FontWeight="Bold" 
-             Margin="10"
-            Foreground="Coral"
-            TextAlignment="Center"/>
+        
         <DataGrid x:Name="dataGridUsuarios" AutoGenerateColumns="False" 
           ItemsSource="{Binding Tareas}"
           CanUserAddRows="False"
@@ -57,7 +52,7 @@
             <DataGrid.Columns>
                 <DataGridTextColumn 
                 Width="1*"
-                Header="Nombre" 
+                Header="Encargado" 
                 Binding="{Binding  Encargado}"/>
                 <DataGridTextColumn
                 Width="1*"
