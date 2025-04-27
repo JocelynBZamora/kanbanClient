@@ -24,7 +24,7 @@ namespace kanbanServer.Services
             new Thread(Escuchar) { IsBackground = true }.Start();
         }
 
-        public event Action<ListaTareasDTO>? Tarearesibida, TareaTerminada, TareaProseso, TareaPendiente, eliminar;
+        public event Action<TareasActivas>? Tarearesibida, TareaTerminada, TareaProseso, TareaPendiente, eliminar;
 
         void Escuchar()
         {
@@ -40,9 +40,9 @@ namespace kanbanServer.Services
                         case "/kanban/":
                             EnviarDatos(context, TareaIndex, "text/html");
                             break;
-                        case "/kanban/TareaEnviada":
-                            var tareaEnviada = File.ReadAllBytes("assest/ListaTareas.json");
-                            EnviarDatos(context, tareaEnviada, "application/json");
+                        case "/kanban/Tareas":
+                            var Tarea = File.ReadAllBytes("assest/listatareas.json");
+                            EnviarDatos(context, Tarea, "application/json");
                             break;
                         default:
                             context.Response.StatusCode = 404;
@@ -53,20 +53,18 @@ namespace kanbanServer.Services
                 {
                     switch (context.Request.RawUrl)
                     {
+                        case "/snake/ka":
                         case "/kanban/tarearesibida":
                             LeerTareas(context, Tarearesibida, null);
                             break;
                         case "/kanban/pendiente":
-                            // Aquí actualizamos la tarea específica a pendiente
-                            ActualizarTareaEstado(context, EstadoTareas.Pendiente);
+                            LeerTareas(context,TareaPendiente, EstadoTareas.Pendiente);
                             break;
                         case "/kanban/enprogreso":
-                            // Actualizar la tarea específica a en progreso
-                            ActualizarTareaEstado(context, EstadoTareas.EnProgreso);
+                            LeerTareas(context, TareaProseso, EstadoTareas.EnProgreso);
                             break;
                         case "/kanban/terminada":
-                            // Actualizar la tarea específica a terminada
-                            ActualizarTareaEstado(context, EstadoTareas.Terminada);
+                            LeerTareas(context,TareaTerminada, EstadoTareas.Terminada);
                             break;
                         case "/kanban/eliminar":
                             LeerTareas(context,eliminar, EstadoTareas.Eliminar);
@@ -89,87 +87,25 @@ namespace kanbanServer.Services
             }
         }
 
-        private void ActualizarTareaEstado(HttpListenerContext context, EstadoTareas e)
-        {
-            //se utilizara para actualizar el estado de la tarea
-            try
-            {
-                byte[] buffernombre = new byte[context.Request.ContentLength64];
-                context.Request.InputStream.Read(buffernombre, 0, buffernombre.Length);
-                string json = Encoding.UTF8.GetString(buffernombre);
-                var tarea = JsonSerializer.Deserialize<TareasDTO>(json);
-                if (tarea != null)
-                {
-                    tarea.FechaCreacion = DateTime.Now;
-                    tarea.Ip = context.Request.RemoteEndPoint.Address.ToString();
-                    tarea.Estado = e;
-                    var listaTareas = new ListaTareasDTO
-                    {
-                        Tareas = new List<TareasDTO> { tarea }
-                    };
-                    switch (e)
-                    {
-                        case EstadoTareas.Pendiente:
-                            TareaPendiente?.Invoke(listaTareas);
-                            break;
-                        case EstadoTareas.EnProgreso:
-                            TareaProseso?.Invoke(listaTareas);
-                            break;
-                        case EstadoTareas.Terminada:
-                            TareaTerminada?.Invoke(listaTareas);
-                            break;
-                        default:
-                            break;
-                    }
-                    context.Response.StatusCode = 200;
-                }
-                else
-                {
-                    context.Response.StatusCode = 400;
-                }
-                context.Response.Close();
-            }
-            catch (JsonException ex)
-            {
-                Console.WriteLine($"Error de deserialización: {ex.Message}");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error general: {ex.Message}");
-            }
-
-        }
-
-        private void LeerTareas(HttpListenerContext context, Action<ListaTareasDTO>? action, EstadoTareas? e)
+        private void LeerTareas(HttpListenerContext context, Action<TareasActivas>? action, EstadoTareas? e)
         {
             try
             {
                 byte[] buffernombre = new byte[context.Request.ContentLength64];
                 context.Request.InputStream.Read(buffernombre, 0, buffernombre.Length);
                 string json = Encoding.UTF8.GetString(buffernombre);
-                var tarea = JsonSerializer.Deserialize<TareasDTO>(json);
+                var tarea = JsonSerializer.Deserialize<TareasActivas>(json);
 
                 if (tarea != null)
                 {
                     tarea.FechaCreacion = DateTime.Now;
-                    tarea.Ip = context.Request.RemoteEndPoint.Address.ToString();
+                    tarea.IP = context.Request.RemoteEndPoint.Address.ToString();
                     if (e != null)
                     {
                         tarea.Estado = e.Value;
-                    } 
-                    var listaTareas = new ListaTareasDTO
-                    {
-                        Tareas = new List<TareasDTO> { tarea }
-                    };
-
-                    action?.Invoke(listaTareas);
-                    context.Response.StatusCode = 200;
+                    }
+                    action?.Invoke(tarea);
                 }
-                else
-                {
-                    context.Response.StatusCode = 400;
-                }
-
                 context.Response.Close();
             }
             catch (Exception ex)
@@ -177,6 +113,56 @@ namespace kanbanServer.Services
                 Console.WriteLine($"Error general: {ex.Message}");
             }
         }
+
+        //private void ActualizarTareaEstado(HttpListenerContext context, EstadoTareas e)
+        //{
+        //    //se utilizara para actualizar el estado de la tarea
+        //    try
+        //    {
+        //        byte[] buffernombre = new byte[context.Request.ContentLength64];
+        //        context.Request.InputStream.Read(buffernombre, 0, buffernombre.Length);
+        //        string json = Encoding.UTF8.GetString(buffernombre);
+        //        var tarea = JsonSerializer.Deserialize<TareasActivas>(json);
+        //        if (tarea != null)
+        //        {
+        //            tarea.FechaCreacion = DateTime.Now;
+        //            tarea.IP = context.Request.RemoteEndPoint.Address.ToString();
+        //            tarea.Estado = e;
+        //            var listaTareas = new TareasActivas();
+        //            switch (e)
+        //            {
+        //                case EstadoTareas.Pendiente:
+        //                    TareaPendiente?.Invoke(listaTareas);
+        //                    break;
+        //                case EstadoTareas.EnProgreso:
+        //                    TareaProseso?.Invoke(listaTareas);
+        //                    break;
+        //                case EstadoTareas.Terminada:
+        //                    TareaTerminada?.Invoke(listaTareas);
+        //                    break;
+        //                default:
+        //                    break;
+        //            }
+        //            context.Response.StatusCode = 200;
+        //        }
+        //        else
+        //        {
+        //            context.Response.StatusCode = 400;
+        //        }
+        //        context.Response.Close();
+        //    }
+        //    catch (JsonException ex)
+        //    {
+        //        Console.WriteLine($"Error de deserialización: {ex.Message}");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine($"Error general: {ex.Message}");
+        //    }
+
+        //}
+
+        
 
         private void EnviarDatos(HttpListenerContext context, byte[] buffer, string tipo)
         {

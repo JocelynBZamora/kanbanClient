@@ -1,66 +1,17 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace kanbanServer.Models
 {
-    public enum EstadoTareas
+    public class TareasDTO
     {
-        Pendiente,
-        EnProgreso,
-        Terminada,
-        TareaEnviada,
-        Eliminar
-    }
-    public  class TareasDTO:Usuario, INotifyPropertyChanged
-    {
-        private string id;
-        public string Id { get { return id; } set { id = value; PropertyChanged?.Invoke(this, new(nameof(Id))); } }
-        private string? descrip;
-        public string? Descrip
-        {
-            get { return descrip; }
-            set
-            {
-                descrip = value;
-                PropertyChanged?.Invoke(this, new(nameof(Descrip)));
-            }
-        }
-        private DateTime? fechaCreacion;
-        public DateTime? FechaCreacion
-        {
-            get { return fechaCreacion; }
-            set
-            {
-                fechaCreacion = value;
-                PropertyChanged?.Invoke(this, new(nameof(FechaCreacion)));
-            }
-        }
-        private string? titulo;
-        public string? Titulo
-        {
-            get { return titulo; }
-            set
-            {
-                titulo = value;
-                PropertyChanged?.Invoke(this, new(nameof(Titulo)));
-            }
-        }
-        private EstadoTareas estado;
-        public EstadoTareas Estado
-        {
-            get { return estado; }
-            set
-            {
-                estado = value;
-                PropertyChanged?.Invoke(this, new(nameof(Estado)));
-            }
-        }
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public string? Encargado {  get; set; }
+        public string? IP {  get; set; }
+        public string? Descrip {  get; set; }
+        public string? Titulo {  get; set; }
 
     }
 }
