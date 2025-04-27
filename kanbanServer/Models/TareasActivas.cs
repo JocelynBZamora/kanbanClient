@@ -9,7 +9,7 @@ namespace kanbanServer.Models
 {
     public enum EstadoTareas
     {
-        Pendiente,
+        Pendiente, 
         EnProgreso,
         Terminada,
         Eliminar

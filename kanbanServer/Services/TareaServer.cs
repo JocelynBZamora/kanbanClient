@@ -14,7 +14,7 @@ namespace kanbanServer.Services
     public class TareaServer
     {
         HttpListener serverbb = new();
-        byte[] TareaIndex;
+        byte[] TareaIndex; 
 
         public TareaServer()
         {

@@ -19,7 +19,7 @@ namespace kanbanServer.ViewModels
         public ObservableCollection<TareasDTO> Encargado { get; set; } = new();
         public ObservableCollection<TareasActivas> Tareas { get; set; } = new();
         ListaTareasDTO tarealista = new();
-
+         
         public KanbanViewModel()
         {
             serverbb.Tarearesibida += Serverbb_Tarearesibida;
