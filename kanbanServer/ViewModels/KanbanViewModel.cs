@@ -44,10 +44,11 @@ namespace kanbanServer.ViewModels
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                var tareaExistente = Tareas.FirstOrDefault(t => t.Titulo.ToLower() == obj.Titulo.ToLower() && t.IP == obj.IP);
+                var tareaExistente = Tareas.FirstOrDefault(t => t.Titulo == obj.Titulo && t.IP == obj.IP);
                 if (tareaExistente == null)
                 {
                     Tareas.Add(obj);
+                    obj.Id= obj.Id = DateTime.Now.Ticks.ToString();
                 }
                 else
                 {
@@ -57,6 +58,7 @@ namespace kanbanServer.ViewModels
                     tareaExistente.Descrip = obj.Descrip;
                     tareaExistente.Titulo = obj.Titulo;
                     tareaExistente.IP = obj.IP;
+                    tareaExistente.Id= obj.Id;
                 }
             });
         }
@@ -65,7 +67,7 @@ namespace kanbanServer.ViewModels
         {
             Application.Current.Dispatcher.Invoke(() => 
             {
-                var tareaExistente = Tareas.FirstOrDefault(x=> x.Id == dTO.Id);
+                var tareaExistente = Tareas.FirstOrDefault(x=> x.Titulo == dTO.Titulo);
                 if(tareaExistente != null)
                 {
                     tareaExistente.Estado=EstadoTareas.Pendiente;
@@ -78,7 +80,7 @@ namespace kanbanServer.ViewModels
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                var tareaExistente = Tareas.FirstOrDefault(x => x.Id == dTO.Id);
+                var tareaExistente = Tareas.FirstOrDefault(x => x.Titulo == dTO.Titulo);
                 if (tareaExistente != null)
                 {
                     tareaExistente.Estado =EstadoTareas.EnProgreso;
@@ -92,7 +94,7 @@ namespace kanbanServer.ViewModels
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                var tareaExistente = Tareas.FirstOrDefault(x => x.Id == dTO.Id);
+                var tareaExistente = Tareas.FirstOrDefault(x=> x.Titulo == dTO.Titulo);
                 if (tareaExistente != null)
                 {
                     tareaExistente.Estado = EstadoTareas.Terminada;

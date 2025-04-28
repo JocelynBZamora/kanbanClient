@@ -95,11 +95,13 @@ namespace kanbanServer.Services
                 context.Request.InputStream.Read(buffernombre, 0, buffernombre.Length);
                 string json = Encoding.UTF8.GetString(buffernombre);
                 var tarea = JsonSerializer.Deserialize<TareasActivas>(json);
-
+                TareasDTO t = new TareasDTO();
                 if (tarea != null)
                 {
                     tarea.FechaCreacion = DateTime.Now;
                     tarea.IP = context.Request.RemoteEndPoint.Address.ToString();
+                    
+                   
                     if (e != null)
                     {
                         tarea.Estado = e.Value;

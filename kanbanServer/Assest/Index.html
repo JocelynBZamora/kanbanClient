@@ -375,7 +375,7 @@
 
         <h1></h1>
         <nav class="desplegable">
-            <a href="#">Cerrar</a>
+            <a></a>
         </nav>
     </header>
     <section class="card" id="tareaAgregar">
@@ -493,12 +493,16 @@
             event.preventDefault();
             const data = event.dataTransfer.getData("text");
             const taskElement = document.getElementById("task");
-            if (taskElement) {
+           
+            if (taskElement)
+            {
                 event.target.appendChild(taskElement);
-            } else {
+            }
+            else
+            {
                 console.error("No se encontró el elemento con id:", task);
             }
-            const columnId = event.target.id;
+   
             let endpoint;
             switch (columnId) {
                 case "todo":

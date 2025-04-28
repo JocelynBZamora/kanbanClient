@@ -16,8 +16,7 @@ namespace kanbanServer.Models
     }
     public class TareasActivas: TareasDTO, INotifyPropertyChanged
     {
-        private string? id;
-        public string? Id { get { return id; } set { id = value; PropertyChanged?.Invoke(this, new(nameof(Id))); } }
+        
         
         private DateTime? fechaCreacion;
         public DateTime? FechaCreacion

@@ -12,6 +12,7 @@ namespace kanbanServer.Models
         public string? IP {  get; set; } 
         public string? Descrip {  get; set; }
         public string? Titulo {  get; set; }
+        public string? Id { get; set; }
 
     }
 }
