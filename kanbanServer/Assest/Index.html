@@ -413,175 +413,153 @@
         const btnAgregar = document.getElementById("btnAgregar");
         const agregar = document.getElementById("agregar");
         const btnCancelar = document.getElementById("btnCancelar");
-        let tareasExistentes = []; 
+        let tareasExistentes = [];
+
         btnAgregar.addEventListener("click", async function () {
-            const titulo = document.getElementById("titulo").value;
+            const titulo = document.getElementById("titulo").value.trim();
             const descripcion = document.getElementById("descripción").value.trim();
             const encargado = document.getElementById("encargado").value.trim();
-            const id = document.getElementById("id");
+
             if (titulo && descripcion && encargado) {
-                // Verificar si la tarea ya existe
-                const tareaExistente = tareasExistentes.find(tarea => tarea.Titulo === titulo && tarea.Descrip === descripcion);
+                // Verificar si ya existe una tarea igual
+                const tareaExistente = tareasExistentes.find(t => t.Titulo === titulo && t.Descrip === descripcion);
                 if (tareaExistente) {
                     alert("La tarea ya existe.");
-                    return; // No agregar la tarea si ya existe
+                    return;
                 }
-                agregarTarea.style.display = "none";
-                vistaTareas.style.display = "block";
 
                 const fechaCreacion = new Date().toISOString();
+                const taskId = `task_${Date.now()}`; // ID único
                 const taskData = {
+                    Id: taskId,
                     Titulo: titulo,
                     Descrip: descripcion,
                     Encargado: encargado,
-                    FechaCreacion: fechaCreacion,
-                    Id: id
+                    FechaCreacion: fechaCreacion
                 };
+
                 try {
                     const response = await fetch('/kanban/tarearesibida', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(taskData)
                     });
 
                     if (response.ok) {
-                        // Guardar la nueva tarea en el array
                         tareasExistentes.push(taskData);
+                        agregarTarea.style.display = "none";
+                        vistaTareas.style.display = "block";
 
-                        // Agregar la tarea al tablero
                         const task = document.createElement("div");
                         task.className = "task";
-                        task.id = `task`;
+                        task.id = taskId;
                         task.draggable = true;
                         task.ondragstart = drag;
                         task.innerHTML = `
-                        <h4>${titulo}</h4>
-                        <h6>${fechaCreacion}</h6>
-                        <p>${descripcion}</p>
-                        <p>${encargado}</p>
-                        <input type="hidden" id="${id}" value="${titulo}" style="display:none;">
-                        <a class="eliminar fa fa-trash" aria-hidden="true"
-                              onclick="eliminarTarea('${task.id}')"></a>`;
-                        document.getElementById("todo").appendChild(task); // Asegúrate de agregarla a la columna correcta
+                <h4>${titulo}</h4>
+                <h6>${fechaCreacion}</h6>
+                <p>${descripcion}</p>
+                <p>${encargado}</p>
+                <a class="eliminar fa fa-trash" aria-hidden="true"
+                  onclick="eliminarTarea('${taskId}')"></a>`;
+                        document.getElementById("todo").appendChild(task);
                     }
+                } catch (error) {
+                    console.error('Error al agregar tarea:', error);
                 }
-    
-                catch (error) { console.error('Error al agregar tarea:', error); }
+            } else {
+                alert("Por favor completa todos los campos.");
             }
-            else {alert("Por favor completa todos los campos.");}
-            
         });
+
         agregar.addEventListener("click", function () {
             vistaTareas.style.display = "none";
             agregarTarea.style.display = "grid";
             document.getElementById("titulo").value = "";
             document.getElementById("descripción").value = "";
-            document.getElementById("Encargado").value = "";
+            document.getElementById("encargado").value = "";
         });
-        function allowDrop(event) { event.preventDefault(); }
-        function drag(event) {
-            event.dataTransfer.setData("text", event.target.id);
-            if (event.target.parentElement.id === "done") {
-                
-                event.preventDefault();
-                return;
-            }
+
+        function allowDrop(event) {
+            event.preventDefault();
         }
+
+        function drag(event) {
+            event.dataTransfer.setData("text/plain", event.target.id);
+        }
+
         async function drop(event) {
             event.preventDefault();
-            const data = event.dataTransfer.getData("text");
-            const taskElement = document.getElementById("task");
-           
-            if (taskElement)
-            {
-                event.target.appendChild(taskElement);
-            }
-            else
-            {
-                console.error("No se encontró el elemento con id:", task);
-            }
-   
-            let endpoint;
-            switch (columnId) {
-                case "todo":
-                    endpoint = "/kanban/pendiente";
-                    break;
-                case "inprogress":
-                    endpoint = "/kanban/enprogreso";
-                    break;
-                case "done":
-                    endpoint = "/kanban/terminada";
-                    break;
-                default:
-                    console.error("Columna desconocida:", columnId);
-                    return;
-            }
-            const updateData = {
-                taskId: done,
-                newColumn: columnId
-            };
-            try {
-                const response = await fetch(endpoint, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(updateData)
-                });
+            const taskId = event.dataTransfer.getData("text/plain");
+            const taskElement = document.getElementById(taskId);
+            const targetColumn = event.currentTarget.id;
 
-                if (!response.ok) {
-                    alert("Error al actualizar la tarea en el servidor.");
-                } else {
-                    if (columnId === "done") {
-                        tareaTerminada(done);
-                    }
+            if (taskElement && event.currentTarget.classList.contains("column")) {
+                event.currentTarget.appendChild(taskElement);
+
+                let endpoint;
+                switch (targetColumn) {
+                    case "todo":
+                        endpoint = "/kanban/pendiente";
+                        break;
+                    case "inprogress":
+                        endpoint = "/kanban/enprogreso";
+                        break;
+                    case "done":
+                        endpoint = "/kanban/terminada";
+                        break;
+                    default:
+                        console.error("Columna desconocida:", targetColumn);
+                        return;
                 }
-            } catch (error) {
-                console.error('Error:', error);
+
+                const updateData = {
+                    taskId: taskId,
+                    newColumn: targetColumn
+                };
+
+                try {
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(updateData)
+                    });
+
+                    if (!response.ok) {
+                        alert("Error al actualizar la tarea en el servidor.");
+                    } else if (targetColumn === "done") {
+                        tareaTerminada(taskId);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
             }
         }
 
         function tareaTerminada(taskId) {
             const taskElement = document.getElementById(taskId);
-            const doneColumn = document.getElementById("done");
-
-            if (taskElement && doneColumn.contains(taskElement)) {
+            if (taskElement) {
                 taskElement.draggable = false;
                 taskElement.style.cursor = "not-allowed";
-
-                fetch('/kanban/terminada', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ taskId: taskId })
-                }).catch(error => console.error("Error al actualizar tarea terminada:", error));
             }
         }
+
         function eliminarTarea(taskId) {
             const confirmacion = confirm("¿Estás seguro de que deseas eliminar esta tarea?");
             if (confirmacion) {
                 const taskElement = document.getElementById(taskId);
                 if (taskElement) {
                     taskElement.remove();
-                    try {
-                        fetch('/kanban/eliminar', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({ taskId: taskId })
-                        }).then(response => {
-                            if (!response.ok) {
-                                alert("Error al eliminar la tarea en el servidor.");
-                            }
-                        });
-                    } catch (error) {
+                    fetch('/kanban/eliminar', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ taskId: taskId })
+                    }).catch(error => {
                         console.error("Error:", error);
                         alert("Ocurrió un error al eliminar la tarea.");
-                    }
+                    });
                 }
             }
         }
@@ -589,9 +567,8 @@
         btnCancelar.addEventListener("click", function () {
             vistaTareas.style.display = "block";
             agregarTarea.style.display = "none";
-           
         });
-       
     </script>
+
 </body>
 </html>

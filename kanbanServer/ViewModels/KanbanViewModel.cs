@@ -48,7 +48,8 @@ namespace kanbanServer.ViewModels
                 if (tareaExistente == null)
                 {
                     Tareas.Add(obj);
-                    obj.Id= obj.Id = DateTime.Now.Ticks.ToString();
+                    File.WriteAllText("assest/listatareas.json", JsonSerializer.Serialize(tarealista));
+
                 }
                 else
                 {
