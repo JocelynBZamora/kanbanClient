@@ -32,7 +32,11 @@ namespace kanbanServer.Models
         private EstadoTareas estado;
         public EstadoTareas Estado
         {
-            get { return estado; }
+            get 
+            {
+               
+                return estado;
+            }
             set
             {
                 estado = value;

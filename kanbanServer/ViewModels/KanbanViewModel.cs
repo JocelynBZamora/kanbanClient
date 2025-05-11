@@ -48,6 +48,7 @@ namespace kanbanServer.ViewModels
                 if (tareaExistente == null)
                 {
                     Tareas.Add(obj);
+                   
                     File.WriteAllText("assest/listatareas.json", JsonSerializer.Serialize(tarealista));
 
                 }
@@ -66,16 +67,23 @@ namespace kanbanServer.ViewModels
 
         private void Serverbb_Pendiente(TareasActivas dTO)
         {
-            Application.Current.Dispatcher.Invoke(() => 
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                var tareaExistente = Tareas.FirstOrDefault(x=> x.Titulo == dTO.Titulo);
-                if(tareaExistente != null)
+                var tareaExistente = Tareas.FirstOrDefault(x => x.Titulo == dTO.Titulo);
+                if (tareaExistente != null)
                 {
-                    tareaExistente.Estado=EstadoTareas.Pendiente;
+                    tareaExistente.Estado = EstadoTareas.EnProgreso;
+
+                    // Actualizar también en tarealista
+                    var tareaLista = tarealista.Tareas.FirstOrDefault(x => x.Id == dTO.Id);
+                    if (tareaLista != null)
+                        tareaExistente.Estado = EstadoTareas.Pendiente;
+
                     File.WriteAllText("assest/listatareas.json", JsonSerializer.Serialize(tarealista));
                 }
             });
         }
+
 
         private void Serverbb_TareaProseso(TareasActivas dTO)
         {
@@ -84,31 +92,34 @@ namespace kanbanServer.ViewModels
                 var tareaExistente = Tareas.FirstOrDefault(x => x.Titulo == dTO.Titulo);
                 if (tareaExistente != null)
                 {
-                    tareaExistente.Estado =EstadoTareas.EnProgreso;
-                    File.WriteAllText("assest/listatareas.json", JsonSerializer.Serialize(tarealista));
+                    tareaExistente.Estado = EstadoTareas.EnProgreso;
 
+                    // Actualizar también en tarealista
+                    var tareaLista = tarealista.Tareas.FirstOrDefault(x => x.Id == dTO.Id);
+                    if (tareaLista != null)
+                        tareaExistente.Estado = EstadoTareas.EnProgreso;
+
+                    File.WriteAllText("assest/listatareas.json", JsonSerializer.Serialize(tarealista));
                 }
             });
         }
+
 
         private void Serverbb_TareaTerminada(TareasActivas dTO)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                var tareaExistente = Tareas.FirstOrDefault(x=> x.Titulo == dTO.Titulo);
+                var tareaExistente = Tareas.FirstOrDefault(x => x.Titulo == dTO.Titulo);
                 if (tareaExistente != null)
                 {
-                    tareaExistente.Estado = EstadoTareas.Terminada;
-                    tareaExistente.FechaCreacion=dTO.FechaCreacion;
-                    tareaExistente.Encargado=dTO.Encargado;
-                    tareaExistente.Descrip=dTO.Descrip;
-                    tareaExistente.Titulo=dTO.Titulo;
-                    tareaExistente.IP=dTO.IP;
-                    tarealista.Tareas.Add(dTO);
-                    tarealista.Tareas=tarealista.Tareas.OrderBy(x=> x.Titulo).ToList();
-                    Encargado.Clear();
-                    tarealista.Tareas.ForEach(x => Encargado.Add(x));
+                    tareaExistente.Estado = EstadoTareas.EnProgreso;
 
+                    // Actualizar también en tarealista
+                    var tareaLista = tarealista.Tareas.FirstOrDefault(x => x.Id == dTO.Id);
+                    if (tareaLista != null)
+                        tareaExistente.Estado = EstadoTareas.Terminada;
+
+                    File.WriteAllText("assest/listatareas.json", JsonSerializer.Serialize(tarealista));
                 }
             });
         }

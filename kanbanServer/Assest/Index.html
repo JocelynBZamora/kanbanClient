@@ -494,47 +494,48 @@
             const taskElement = document.getElementById(taskId);
             const targetColumn = event.currentTarget.id;
 
-            if (taskElement && event.currentTarget.classList.contains("column")) {
-                event.currentTarget.appendChild(taskElement);
 
-                let endpoint;
-                switch (targetColumn) {
-                    case "todo":
-                        endpoint = "/kanban/pendiente";
-                        break;
-                    case "inprogress":
-                        endpoint = "/kanban/enprogreso";
-                        break;
-                    case "done":
-                        endpoint = "/kanban/terminada";
-                        break;
-                    default:
-                        console.error("Columna desconocida:", targetColumn);
-                        return;
+            const tarea = tareasExistentes.find(t => t.Id === taskId);
+            if (!tarea) {
+                alert("No se encontró la tarea.");
+                return;
+            }
+
+            let endpoint;
+            switch (targetColumn) {
+                case "todo":
+                    endpoint = "/kanban/pendiente";
+                    tarea.Estado = "Pendiente";
+                    break;
+                case "inprogress":
+                    endpoint = "/kanban/enprogreso";
+                    tarea.Estado = "EnProgreso";
+                    break;
+                case "done":
+                    endpoint = "/kanban/terminada";
+                    tarea.Estado = "Terminada";
+                    break;
+                default:
+                    console.error("Columna desconocida:", targetColumn);
+                    return;
+            }
+            
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(tarea)
+                });
+
+                if (!response.ok) {
+                    alert("Error al actualizar la tarea en el servidor.");
+                } else if (targetColumn === "done") {
+                    tareaTerminada(taskId);
                 }
-
-                const updateData = {
-                    taskId: taskId,
-                    newColumn: targetColumn
-                };
-
-                try {
-                    const response = await fetch(endpoint, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(updateData)
-                    });
-
-                    if (!response.ok) {
-                        alert("Error al actualizar la tarea en el servidor.");
-                    } else if (targetColumn === "done") {
-                        tareaTerminada(taskId);
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                }
+            } catch (error) {
+                console.error('Error:', error);
             }
         }
 
