@@ -89,8 +89,6 @@ namespace kanbanServer.ViewModels
                 if (tareaExistente != null)
                 {
                     tareaExistente.Estado = EstadoTareas.EnProgreso;
-
-                    // Actualizar también en tarealista
                     var tareaLista = tarealista.Tareas.FirstOrDefault(x => x.Id == dTO.Id);
                     if (tareaLista != null)
                         tareaExistente.Estado = EstadoTareas.EnProgreso;
@@ -108,12 +106,22 @@ namespace kanbanServer.ViewModels
                 {
                     tareaExistente.Estado = EstadoTareas.Terminada;
 
-                    // Actualizar también en tarealista
+                    
                     var tareaLista = tarealista.Tareas.FirstOrDefault(x => x.Id == dTO.Id);
                     if (tareaLista != null)
                         tareaExistente.Estado = EstadoTareas.Terminada;
 
-                    File.WriteAllText("assest/listatareas.json", JsonSerializer.Serialize(tarealista));
+
+                    try
+                    {
+                        File.WriteAllText("Assest/listatareas.json", JsonSerializer.Serialize(tareaExistente));
+                    }
+                    catch (Exception ex)
+                    {
+                        
+                        Console.WriteLine($"Error al guardar el archivo: {ex.Message}");
+                    }
+
                 }
             });
         }

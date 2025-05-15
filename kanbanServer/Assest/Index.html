@@ -421,12 +421,11 @@
 
             if (titulo && descripcion && encargado) {
                 // Verificar si ya existe una tarea igual
-                const tareaExistente = tareasExistentes.find(t => t.Titulo === titulo && t.Descrip === descripcion);
+                const tareaExistente = tareasExistentes.find(t => t.Titulo === titulo );
                 if (tareaExistente) {
                     alert("La tarea ya existe.");
                     return;
                 }
-
                 const fechaCreacion = new Date().toISOString();
                 const taskId = `task_${Date.now()}`; // ID único
                 const taskData = {
