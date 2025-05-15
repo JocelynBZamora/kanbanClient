@@ -18,8 +18,7 @@ namespace kanbanServer.ViewModels
         TareaServer serverbb = new();
         public ObservableCollection<TareasDTO> Encargado { get; set; } = new();
         public ObservableCollection<TareasActivas> Tareas { get; set; } = new();
-        ListaTareasDTO tarealista = new();
-         
+        ListaTareasDTO tarealista = new(); 
         public KanbanViewModel()
         {
             serverbb.Tarearesibida += Serverbb_Tarearesibida;
@@ -64,7 +63,6 @@ namespace kanbanServer.ViewModels
                 }
             });
         }
-
         private void Serverbb_Pendiente(TareasActivas dTO)
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -72,7 +70,7 @@ namespace kanbanServer.ViewModels
                 var tareaExistente = Tareas.FirstOrDefault(x => x.Titulo == dTO.Titulo);
                 if (tareaExistente != null)
                 {
-                    tareaExistente.Estado = EstadoTareas.EnProgreso;
+                    tareaExistente.Estado = EstadoTareas.Pendiente;
 
                     // Actualizar también en tarealista
                     var tareaLista = tarealista.Tareas.FirstOrDefault(x => x.Id == dTO.Id);
@@ -83,8 +81,6 @@ namespace kanbanServer.ViewModels
                 }
             });
         }
-
-
         private void Serverbb_TareaProseso(TareasActivas dTO)
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -103,8 +99,6 @@ namespace kanbanServer.ViewModels
                 }
             });
         }
-
-
         private void Serverbb_TareaTerminada(TareasActivas dTO)
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -112,7 +106,7 @@ namespace kanbanServer.ViewModels
                 var tareaExistente = Tareas.FirstOrDefault(x => x.Titulo == dTO.Titulo);
                 if (tareaExistente != null)
                 {
-                    tareaExistente.Estado = EstadoTareas.EnProgreso;
+                    tareaExistente.Estado = EstadoTareas.Terminada;
 
                     // Actualizar también en tarealista
                     var tareaLista = tarealista.Tareas.FirstOrDefault(x => x.Id == dTO.Id);
@@ -123,7 +117,6 @@ namespace kanbanServer.ViewModels
                 }
             });
         }
-
         private void Serverbb_Eliminar(TareasActivas dTO)
         {
             Application.Current.Dispatcher.Invoke(() => 
