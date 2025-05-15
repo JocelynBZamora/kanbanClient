@@ -484,23 +484,50 @@
         }
 
         function drag(event) {
+            if (event.target.parentElement.id === "done") {
+                event.preventDefault();
+                return;
+            }
             event.dataTransfer.setData("text/plain", event.target.id);
         }
 
-        function drop(event)
-        {
+        function drop(event) {
             event.preventDefault();
-            var data = event.dataTransfer.getData("text");
-            event.target.appendChild(document.getElementById(data));
-            //mandara llamar a la funcion dependiendo de la columna
-            if (event.target.id === "todo") {
-                tareapendiente(data);
-            } else if (event.target.id === "inprogress") {
-                tareaEnProgreso(data);
-            } else if (event.target.id === "done") {
-                tareaTerminada(data);
+            const data = event.dataTransfer.getData("text");
+            const taskElement = document.getElementById(data);
+
+            if (!taskElement) return;
+
+            const sourceColumnId = taskElement.parentElement.id;
+            const targetColumnId = event.target.id;
+
+            // No permitir mover de 'done' a cualquier otra columna
+            if (sourceColumnId === "done") {
+                alert("Las tareas completadas no pueden ser movidas.");
+                return;
+            }
+
+            // No permitir mover de 'inprogress' a 'todo'
+            if (sourceColumnId === "inprogress" && targetColumnId === "todo") {
+                alert("No puedes mover una tarea en progreso a pendiente.");
+                return;
+            }
+
+            // Asegura que solo se agregue a una columna válida
+            if (["todo", "inprogress", "done"].includes(targetColumnId)) {
+                event.target.appendChild(taskElement);
+
+                // Lógica del backend según columna destino
+                if (targetColumnId === "todo") {
+                    tareapendiente(data);
+                } else if (targetColumnId === "inprogress") {
+                    tareaEnProgreso(data);
+                } else if (targetColumnId === "done") {
+                    tareaTerminada(data);
+                }
             }
         }
+
         async function tareapendiente(taskId)
         { 
             const taskElement = document.getElementById(taskId);
@@ -578,20 +605,22 @@
                 }
             }
         }
-        function eliminarTarea(taskId) {
-            const confirmacion = confirm("¿Estás seguro de que deseas eliminar esta tarea?");
-            if (confirmacion) {
-                const taskElement = document.getElementById(taskId);
-                if (taskElement) {
-                    taskElement.remove();
-                    fetch('/kanban/eliminar', {
+        async function eliminarTarea(taskId) {
+            const taskElement = document.getElementById(taskId);
+            const confirmar = confirm('¿Desea eliminar la tarea?');
+            if (!confirmar) return;
+            if (taskElement) {
+                try {
+                    const response = await fetch('/kanban/eliminar', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ taskId: taskId })
-                    }).catch(error => {
-                        console.error("Error:", error);
-                        alert("Ocurrió un error al eliminar la tarea.");
+                        body: JSON.stringify({ Id: taskId })
                     });
+                    if (response.ok) {
+                        taskElement.remove();
+                    }
+                } catch (error) {
+                    console.error('Error al eliminar tarea:', error);
                 }
             }
         }
