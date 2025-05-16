@@ -14,7 +14,7 @@ namespace kanbanServer.Services
     public class TareaServer
     {
         HttpListener serverbb = new();
-        byte[] TareaIndex; 
+        byte[] TareaIndex;
 
         public TareaServer()
         {
@@ -23,9 +23,7 @@ namespace kanbanServer.Services
             serverbb.Start();
             new Thread(Escuchar) { IsBackground = true }.Start();
         }
-
         public event Action<TareasActivas>? Tarearesibida, TareaTerminada, TareaProseso, TareaPendiente, eliminar;
-
         void Escuchar()
         {
             try
@@ -41,7 +39,7 @@ namespace kanbanServer.Services
                             EnviarDatos(context, TareaIndex, "text/html");
                             break;
                         case "/kanban/Tareas":
-                            var Tarea = File.ReadAllBytes("assest/listatareas.json");
+                            var Tarea = File.ReadAllBytes("Assest/listatareas.json");
                             EnviarDatos(context, Tarea, "application/json");
                             break;
                         default:
@@ -86,7 +84,6 @@ namespace kanbanServer.Services
                 Console.WriteLine(ex.Message);
             }
         }
-
         private void LeerTareas(HttpListenerContext context, Action<TareasActivas>? action, EstadoTareas? e)
         {
             try
@@ -115,57 +112,6 @@ namespace kanbanServer.Services
                 Console.WriteLine($"Error general: {ex.Message}");
             }
         }
-
-        //private void ActualizarTareaEstado(HttpListenerContext context, EstadoTareas e)
-        //{
-        //    //se utilizara para actualizar el estado de la tarea
-        //    try
-        //    {
-        //        byte[] buffernombre = new byte[context.Request.ContentLength64];
-        //        context.Request.InputStream.Read(buffernombre, 0, buffernombre.Length);
-        //        string json = Encoding.UTF8.GetString(buffernombre);
-        //        var tarea = JsonSerializer.Deserialize<TareasActivas>(json);
-        //        if (tarea != null)
-        //        {
-        //            tarea.FechaCreacion = DateTime.Now;
-        //            tarea.IP = context.Request.RemoteEndPoint.Address.ToString();
-        //            tarea.Estado = e;
-        //            var listaTareas = new TareasActivas();
-        //            switch (e)
-        //            {
-        //                case EstadoTareas.Pendiente:
-        //                    TareaPendiente?.Invoke(listaTareas);
-        //                    break;
-        //                case EstadoTareas.EnProgreso:
-        //                    TareaProseso?.Invoke(listaTareas);
-        //                    break;
-        //                case EstadoTareas.Terminada:
-        //                    TareaTerminada?.Invoke(listaTareas);
-        //                    break;
-        //                default:
-        //                    break;
-        //            }
-        //            context.Response.StatusCode = 200;
-        //        }
-        //        else
-        //        {
-        //            context.Response.StatusCode = 400;
-        //        }
-        //        context.Response.Close();
-        //    }
-        //    catch (JsonException ex)
-        //    {
-        //        Console.WriteLine($"Error de deserialización: {ex.Message}");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine($"Error general: {ex.Message}");
-        //    }
-
-        //}
-
-        
-
         private void EnviarDatos(HttpListenerContext context, byte[] buffer, string tipo)
         {
             context.Response.ContentLength64 = buffer.Length;

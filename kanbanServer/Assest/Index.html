@@ -419,7 +419,7 @@
             const descripcion = document.getElementById("descripción").value.trim();
             const encargado = document.getElementById("encargado").value.trim();
 
-            if (titulo && descripcion && encargado) {
+            if (titulo ) {
                 // Verificar si ya existe una tarea igual
                 const tareaExistente = tareasExistentes.find(t => t.Titulo === titulo );
                 if (tareaExistente) {
@@ -427,7 +427,7 @@
                     return;
                 }
                 const fechaCreacion = new Date().toISOString();
-                const taskId = `task_${Date.now()}`; // ID único
+                const taskId = `${Math.random().toString(36).substring(2, 10) }`; // ID único
                 const taskData = {
                     Id: taskId,
                     Titulo: titulo,
@@ -469,7 +469,6 @@
                 alert("Por favor completa todos los campos.");
             }
         });
-
         agregar.addEventListener("click", function () {
             vistaTareas.style.display = "none";
             agregarTarea.style.display = "grid";
@@ -477,11 +476,9 @@
             document.getElementById("descripción").value = "";
             document.getElementById("encargado").value = "";
         });
-
         function allowDrop(event) {
             event.preventDefault();
         }
-
         function drag(event) {
             if (event.target.parentElement.id === "done") {
                 event.preventDefault();
@@ -489,7 +486,6 @@
             }
             event.dataTransfer.setData("text/plain", event.target.id);
         }
-
         function drop(event) {
             event.preventDefault();
             const data = event.dataTransfer.getData("text");
@@ -526,7 +522,6 @@
                 }
             }
         }
-
         async function tareapendiente(taskId)
         { 
             const taskElement = document.getElementById(taskId);
@@ -626,6 +621,7 @@
         btnCancelar.addEventListener("click", function () {
             vistaTareas.style.display = "block";
             agregarTarea.style.display = "none";
+            
         });
     </script>
 

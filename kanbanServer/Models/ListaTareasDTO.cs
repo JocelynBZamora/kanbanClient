@@ -8,6 +8,7 @@ namespace kanbanServer.Models
 {
     public class ListaTareasDTO
     { 
-        public List<TareasDTO> Tareas { get; set; } = new();
+        public List<TareasActivas> Tareas { get; set; } = new();
+        public List<TareasDTO> TareasActivas { get; set;} = new();
     }
 }
