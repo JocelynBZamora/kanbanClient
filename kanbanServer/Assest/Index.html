@@ -623,6 +623,45 @@
             agregarTarea.style.display = "none";
             
         });
+        async function cargarTareas() {
+            const ipServidor = localStorage.getItem('ipServidor') || 'http://localhost:19800';
+
+            try {
+                const response = await fetch(`${ipServidor}/kanban/Tareas`);
+                if (response.ok) {
+                    const data = await response.json();
+                    tareasExistentes = data.Tareas || [];
+
+                    tareasExistentes.forEach(t => {
+                        const task = document.createElement("div");
+                        task.className = "task";
+                        task.id = t.Id;
+                        task.draggable = true;
+                        task.ondragstart = drag;
+                        task.innerHTML = `
+                    <h4>${t.Titulo}</h4>
+                    <h6>${t.FechaCreacion}</h6>
+                    <p>${t.Descrip}</p>
+                    <p>${t.Encargado}</p>
+                    <a class="eliminar fa fa-trash" aria-hidden="true"
+                       onclick="eliminarTarea('${t.Id}')"></a>`;
+
+                        if (t.Estado === "Pendiente") {
+                            todoColumn.appendChild(task);
+                        } else if (t.Estado === "EnProgreso") {
+                            inProgressColumn.appendChild(task);
+                        } else if (t.Estado === "Terminada") {
+                            doneColumn.appendChild(task);
+                        }
+                    });
+                    agregarTarea.style.display = "none";
+                    vistaTareas.style.display = "block";
+                }
+            } catch (error) {
+                console.error("Error al cargar tareas:", error);
+            }
+        }
+        window.onload = cargarTareas;
     </script>
 
 </body>
