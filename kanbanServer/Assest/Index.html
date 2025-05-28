@@ -480,10 +480,6 @@
             event.preventDefault();
         }
         function drag(event) {
-            if (event.target.parentElement.id === "done") {
-                event.preventDefault();
-                return;
-            }
             event.dataTransfer.setData("text/plain", event.target.id);
         }
         function drop(event) {
@@ -496,23 +492,14 @@
             const sourceColumnId = taskElement.parentElement.id;
             const targetColumnId = event.target.id;
 
-            // No permitir mover de 'done' a cualquier otra columna
-            if (sourceColumnId === "done") {
-                alert("Las tareas completadas no pueden ser movidas.");
-                return;
-            }
-
-            // No permitir mover de 'inprogress' a 'todo'
             if (sourceColumnId === "inprogress" && targetColumnId === "todo") {
                 alert("No puedes mover una tarea en progreso a pendiente.");
                 return;
             }
 
-            // Asegura que solo se agregue a una columna válida
             if (["todo", "inprogress", "done"].includes(targetColumnId)) {
                 event.target.appendChild(taskElement);
 
-                // Lógica del backend según columna destino
                 if (targetColumnId === "todo") {
                     tareapendiente(data);
                 } else if (targetColumnId === "inprogress") {
@@ -530,7 +517,8 @@
                     Titulo: taskElement.querySelector("h4").innerText,
                     Descrip: taskElement.querySelector("p").innerText,
                     Encargado: taskElement.querySelector("p:nth-child(4)").innerText,
-                    FechaCreacion: taskElement.querySelector("h6").innerText
+                    FechaCreacion: taskElement.querySelector("h6").innerText,
+                    Estado: 0
                 };
                 try {
                     const response = await fetch('/kanban/pendiente', {
@@ -538,17 +526,11 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(taskData)
                     });
-                    if (response.ok) {
-                        // Actualizar la interfaz de usuario
-                        todoColumn.appendChild(taskElement);
-                    }
+                    
                 } catch (error) {
                     console.error('Error al mover tarea:', error);
                 }
-                cargarTareas();
-
             }
-
         }
         async function tareaEnProgreso(taskId) {
             const taskElement = document.getElementById(taskId);
@@ -558,7 +540,8 @@
                     Titulo: taskElement.querySelector("h4").innerText,
                     Descrip: taskElement.querySelector("p").innerText,
                     Encargado: taskElement.querySelector("p:nth-child(4)").innerText,
-                    FechaCreacion: taskElement.querySelector("h6").innerText
+                    FechaCreacion: taskElement.querySelector("h6").innerText,
+                    Estado: 1
                 };
                 try {
                     const response = await fetch('/kanban/enprogreso', {
@@ -566,15 +549,10 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(taskData)
                     });
-                    if (response.ok) {
-                        // Actualizar la interfaz de usuario
-                        inProgressColumn.appendChild(taskElement);
-                    }
+                    
                 } catch (error) {
                     console.error('Error al mover tarea:', error);
                 }
-                cargarTareas();
-
             }
         }
         async function tareaTerminada(taskId) {
@@ -585,7 +563,8 @@
                     Titulo: taskElement.querySelector("h4").innerText,
                     Descrip: taskElement.querySelector("p").innerText,
                     Encargado: taskElement.querySelector("p:nth-child(4)").innerText,
-                    FechaCreacion: taskElement.querySelector("h6").innerText
+                    FechaCreacion: taskElement.querySelector("h6").innerText,
+                    Estado: 2
                 };
                 try {
                     const response = await fetch('/kanban/terminada', {
@@ -593,12 +572,7 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(taskData)
                     });
-                    cargarTareas();
-
-                    if (response.ok) {
-                        // Actualizar la interfaz de usuario
-                        doneColumn.appendChild(taskElement);
-                    }
+                    
                 } catch (error) {
                     console.error('Error al mover tarea:', error);
                 }
@@ -641,50 +615,14 @@
                 const data = await response.json();
                 console.log("Tareas recibidas del servidor:", data);
 
-                // Limpiar las columnas antes de cargar las tareas
-                document.getElementById('todo').innerHTML = '<h3>Pendiente</h3>';
-                document.getElementById('inprogress').innerHTML = '<h3>En progreso</h3>';
-                document.getElementById('done').innerHTML = '<h3>Completado</h3>';
 
-                // Cargar tareas activas
-                if (data.Tareas && Array.isArray(data.Tareas)) {
-                    data.TareasActivas.forEach(tarea => {
-                        const task = document.createElement("div");
-                        task.className = "task";
-                        task.id = `task-${tarea.Id}`;
-                        task.draggable = tarea.Estado !== 'Terminada';
-                        task.ondragstart = drag;
-                        task.innerHTML = `
-                            <h4>${tarea.Titulo}</h4>
-                            <h6>${new Date(tarea.FechaCreacion).toLocaleString()}</h6>
-                            <p>${tarea.Descrip}</p>
-                            <p>${tarea.Encargado}</p>
-                            <input type="hidden" id="${tarea.Id}" value="${tarea.Titulo}" style="display:none;">
-                            <a class="eliminar fa fa-trash" aria-hidden="true"
-                                onclick="eliminarTarea('${task.id}')"></a>`;
-
-                        // Agregar a la columna correspondiente según el estado
-                        switch(tarea.Estado) {
-                            case 0:
-                                document.getElementById('todo').appendChild(task);
-                                break;
-                            case 1:
-                                document.getElementById('inprogress').appendChild(task);
-                                break;
-                            case 2:
-                                document.getElementById('done').appendChild(task);
-                                break;
-                        }
-                    });
-                }
-
-                // Cargar tareas terminadas
                 if (data.Tareas && Array.isArray(data.Tareas)) {
                     data.Tareas.forEach(tarea => {
                         const task = document.createElement("div");
                         task.className = "task";
                         task.id = `task-${tarea.Id}`;
-                        task.draggable = false; // Las tareas terminadas no se pueden mover
+                        task.draggable = true;
+                        task.ondragstart = drag;
                         task.innerHTML = `
                             <h4>${tarea.Titulo}</h4>
                             <h6>${new Date(tarea.FechaCreacion).toLocaleString()}</h6>
@@ -707,16 +645,13 @@
                     });
                 }
 
-                // Actualizar las listas en memoria
                 tareasExistentes = data.Tareas || [];
-                tareasActivas = data.TareasActivas || [];
 
             } catch (error) {
                 console.error("Error al cargar tareas:", error);
             }
         }
 
-        // Cargar tareas al iniciar la página
         document.addEventListener('DOMContentLoaded', cargarTareas);
     </script>
 
