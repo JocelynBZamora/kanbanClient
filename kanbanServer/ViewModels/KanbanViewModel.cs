@@ -35,7 +35,7 @@ namespace kanbanServer.ViewModels
                 {
                     tarealista= lista;
                     //Encargadobb.Clear();
-                    tarealista.Tareas.ForEach(t => {Encargadobb.Add(t); });
+                    tarealista.Tareas.ForEach(t => {Tareas.Add(t); });
                 }
             }
         }
@@ -171,6 +171,20 @@ namespace kanbanServer.ViewModels
         {
             Application.Current.Dispatcher.Invoke(() => 
             {
+                //Deserializo el json 
+                var json = File.ReadAllText("Assest/listatareas.json");
+                var lista = JsonSerializer.Deserialize<ListaTareasDTO>(json);
+                if (lista != null)
+                {
+                    // Eliminar la tarea de la lista
+                    var tareaAEliminar = lista.Tareas.FirstOrDefault(x => x.Id == dTO.Id);
+                    if (tareaAEliminar != null)
+                    {
+                        lista.Tareas.Remove(tareaAEliminar);
+                        File.WriteAllText("Assest/listatareas.json", JsonSerializer.Serialize(lista));
+                    }
+                }
+                // Actualizar la colección Tareas
                 var tareaExistente = Tareas.FirstOrDefault(x => x.Id == dTO.Id);
                 if (tareaExistente != null)
                 {

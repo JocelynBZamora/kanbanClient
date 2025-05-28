@@ -468,6 +468,7 @@
             } else {
                 alert("Por favor completa todos los campos.");
             }
+            
         });
         agregar.addEventListener("click", function () {
             vistaTareas.style.display = "none";
@@ -475,6 +476,7 @@
             document.getElementById("titulo").value = "";
             document.getElementById("descripción").value = "";
             document.getElementById("encargado").value = "";
+            
         });
         function allowDrop(event) {
             event.preventDefault();
@@ -628,7 +630,7 @@
             agregarTarea.style.display = "none";
 
         });
-        var datosJS = "http://localhost:19800/";
+        var datosJS = "http://localhost:19800/kanban/Tareas";
         console.log(datosJS);
         async function cargarTareas() {
             try {
@@ -702,6 +704,7 @@
                                 break;
                             case 2:
                                 document.getElementById('done').appendChild(task);
+                             
                                 break;
                         }
                     });
