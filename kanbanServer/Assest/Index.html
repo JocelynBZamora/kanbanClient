@@ -647,7 +647,7 @@
                 document.getElementById('done').innerHTML = '<h3>Completado</h3>';
 
                 // Cargar tareas activas
-                if (data.TareasActivas && Array.isArray(data.TareasActivas)) {
+                if (data.Tareas && Array.isArray(data.Tareas)) {
                     data.TareasActivas.forEach(tarea => {
                         const task = document.createElement("div");
                         task.className = "task";
@@ -665,13 +665,13 @@
 
                         // Agregar a la columna correspondiente según el estado
                         switch(tarea.Estado) {
-                            case 'Pendiente':
+                            case 0:
                                 document.getElementById('todo').appendChild(task);
                                 break;
-                            case 'EnProgreso':
+                            case 1:
                                 document.getElementById('inprogress').appendChild(task);
                                 break;
-                            case 'Terminada':
+                            case 2:
                                 document.getElementById('done').appendChild(task);
                                 break;
                         }
@@ -693,7 +693,17 @@
                             <input type="hidden" id="${tarea.Id}" value="${tarea.Titulo}" style="display:none;">
                             <a class="eliminar fa fa-trash" aria-hidden="true"
                                 onclick="eliminarTarea('${task.id}')"></a>`;
-                        document.getElementById('done').appendChild(task);
+                        switch (tarea.Estado) {
+                            case 0:
+                                document.getElementById('todo').appendChild(task);
+                                break;
+                            case 1:
+                                document.getElementById('inprogress').appendChild(task);
+                                break;
+                            case 2:
+                                document.getElementById('done').appendChild(task);
+                                break;
+                        }
                     });
                 }
 
