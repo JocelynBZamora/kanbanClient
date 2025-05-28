@@ -632,57 +632,30 @@
         var datosJS = "http://localhost:19800/kanban/Tareas";
         console.log(datosJS);
         async function cargarTareas() {
-            const ipServidor = localStorage.getItem('ipServidor') || 'http://localhost:19800';
-            console.log(ipServidor);
-            //try {
+            const ipServidor = localStorage.getItem('ipServidor');
+            console.log("IP Servidor:", ipServidor);
+
+            if (!ipServidor) { //aqui se queda
+                console.error("❌ No se ha definido 'ipServidor' en localStorage.");
+                return;
+            }
+
+            try {
                 const response = await fetch(`${ipServidor}/kanban/Tareas`);
-            //    if (response.ok) {
-                    const data = await response.json();
-                    console.log("Tareas recibidas del servidor:", data); // Para depuración
-            //        tareasExistentes = data || [];
+                if (!response.ok) {
+                    console.error(` Error HTTP: ${response.status} ${response.statusText}`);
+                    return;
+                }
 
-
-            //        tareasExistentes.forEach(t => {
-            //            const task = document.createElement("div");
-            //            task.className = "task";
-            //            task.id = t.Id;
-            //            task.draggable = true;
-            //            task.ondragstart = drag;
-            //            task.innerHTML = `
-            //        <h4>${t.Titulo}</h4>
-            //        <h6>${t.FechaCreacion}</h6>
-            //        <p>${t.Descrip}</p>
-            //        <p>${t.Encargado}</p>
-            //        <a class="eliminar fa fa-trash" aria-hidden="true"
-            //           onclick="eliminarTarea('${t.Id}')"></a>`;
-
-            //            // Asegúrate de que el servidor envíe el estado correcto
-            //            if (t.Estado === "Pendiente" || !t.Estado) {
-            //                todoColumn.append(task);
-            //            } else if (t.Estado === "EnProgreso") {
-            //                inProgressColumn.append(task);
-            //            } else if (t.Estado === "Terminada") {
-            //                doneColumn.append(task);
-            //            }
-            //        });
-
-            //        agregarTarea.style.display = "none";
-            //        vistaTareas.style.display = "block";
-            //    } else {
-            //        console.error("Error al cargar tareas:", response.statusText);
-            //        // Mostrar vista de tareas incluso si hay error
-            //        agregarTarea.style.display = "none";
-            //        vistaTareas.style.display = "block";
-            //    }
-            //} catch (error) {
-            //    console.error("Error al cargar tareas:", error);
-            //    // Mostrar vista de tareas incluso si hay error
-            //    agregarTarea.style.display = "none";
-            //    vistaTareas.style.display = "block";
-            //}
+                const data = await response.json();
+                console.log("Tareas recibidas del servidor:", data);
+            } catch (error) {
+                console.error(" Error al cargar tareas:", error);
+            }
+            
         }
         document.addEventListener('DOMContentLoaded', function () {
-            cargarTareas();
+            cargarTareas(); 
         });
     </script>
 
