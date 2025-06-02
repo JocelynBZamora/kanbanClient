@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Text.Json;
+using System.Threading;
 
 namespace kanbanServer.ViewModels
 {
@@ -169,26 +170,32 @@ namespace kanbanServer.ViewModels
         }
         private void Serverbb_Eliminar(TareasActivas dTO)
         {
-            Application.Current.Dispatcher.Invoke(() => 
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                //Deserializo el json 
-                var json = File.ReadAllText("Assest/listatareas.json");
-                var lista = JsonSerializer.Deserialize<ListaTareasDTO>(json);
-                if (lista != null)
-                {
-                    // Eliminar la tarea de la lista
-                    var tareaAEliminar = lista.Tareas.FirstOrDefault(x => x.Id == dTO.Id);
-                    if (tareaAEliminar != null)
-                    {
-                        lista.Tareas.Remove(tareaAEliminar);
-                        File.WriteAllText("Assest/listatareas.json", JsonSerializer.Serialize(lista));
-                    }
-                }
-                // Actualizar la colección Tareas
-                var tareaExistente = Tareas.FirstOrDefault(x => x.Id == dTO.Id);
+                // Buscar la tarea en la colección Tareas
+                var tareaExistente = Tareas.FirstOrDefault(t =>  t.IP == dTO.IP);
+
                 if (tareaExistente != null)
                 {
+                    // Eliminar la tarea de la colección Tareas
                     Tareas.Remove(tareaExistente);
+
+                    // Eliminar la tarea de la lista en tarealista.Tareas
+                    var tareaLista = tarealista.Tareas.FirstOrDefault(t => t.IP == dTO.IP);
+                    if (tareaLista != null)
+                    {
+                        tarealista.Tareas.Remove(tareaLista);
+                    }
+
+                    // Guardar los cambios en el archivo JSON
+                    try
+                    {
+                        File.WriteAllText("Assest/listatareas.json", JsonSerializer.Serialize(tarealista));
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error al guardar el archivo JSON: {ex.Message}");
+                    }
                 }
             });
         }
