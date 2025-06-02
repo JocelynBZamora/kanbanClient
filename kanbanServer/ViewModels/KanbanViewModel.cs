@@ -44,7 +44,7 @@ namespace kanbanServer.ViewModels
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                var tareaExistente = Tareas.FirstOrDefault(t => t.Titulo == obj.Titulo);
+                var tareaExistente = Tareas.FirstOrDefault(t => t.Titulo == obj.Titulo && t.IP == obj.IP);
                 if (tareaExistente == null)
                 {
                     Tareas.Add(obj);
@@ -67,104 +67,86 @@ namespace kanbanServer.ViewModels
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                Application.Current.Dispatcher.Invoke(() =>
+                // Buscar la tarea activa con el mismo Título y IP  
+                var tareaExistente = Tareas.FirstOrDefault(x => x.Titulo == dTO.Titulo && x.IP == dTO.IP);
+
+                if (tareaExistente != null)
                 {
-                    // Buscar todas las tareas activas con el mismo Título
-                    var tareasExistentes = Tareas.Where(x => x.Titulo == dTO.Titulo).ToList();
-
-                    if (tareasExistentes.Any())
+                    tareaExistente.Estado = EstadoTareas.Pendiente;
+                    try
                     {
-                        foreach (var tarea in tareasExistentes)
-                        {
-                            tarea.Estado = EstadoTareas.Pendiente;
-                            try
-                            {
-                                File.WriteAllText("Assest/listatareas.json", JsonSerializer.Serialize(tarealista));
-                            }
-                            catch (Exception ex)
-                            {
-                                Console.WriteLine($"Error al guardar el archivo JSON: {ex.Message}");
-                            }
-                        }
-
-                        // También actualiza la lista en tarealista.Tareas si corresponde
-                        foreach (var tareaLista in tarealista.Tareas.Where(x => x.Id == dTO.Id))
+                        // Actualizar la lista en tarealista.Tareas si corresponde  
+                        var tareaLista = tarealista.Tareas.FirstOrDefault(x => x.Id == dTO.Id);
+                        if (tareaLista != null)
                         {
                             tareaLista.Estado = EstadoTareas.Pendiente;
                         }
 
-                        // Guardar los cambios en el archivo JSON
+                        // Guardar los cambios en el archivo JSON  
                         File.WriteAllText("Assest/listatareas.json", JsonSerializer.Serialize(tarealista));
                     }
-                });
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error al guardar el archivo JSON: {ex.Message}");
+                    }
+                }
             });
         }
         private void Serverbb_TareaProseso(TareasActivas dTO)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                Application.Current.Dispatcher.Invoke(() =>
+                // Buscar la tarea activa con el mismo Título y IP  
+                var tareaExistente = Tareas.FirstOrDefault(x => x.Titulo == dTO.Titulo && x.IP == dTO.IP);
+
+                if (tareaExistente != null)
                 {
-                    // Buscar todas las tareas activas con el mismo Título
-                    var tareasExistentes = Tareas.Where(x => x.Titulo == dTO.Titulo).ToList();
-
-                    if (tareasExistentes.Any())
+                    tareaExistente.Estado = EstadoTareas.EnProgreso;
+                    try
                     {
-                        foreach (var tarea in tareasExistentes)
-                        {
-                            tarea.Estado = EstadoTareas.EnProgreso;
-                            try
-                            {
-                                File.WriteAllText("Assest/listatareas.json", JsonSerializer.Serialize(tarealista));
-                            }
-                            catch (Exception ex)
-                            {
-                                Console.WriteLine($"Error al guardar el archivo JSON: {ex.Message}");
-                            }
-                        }
-
-                        // También actualiza la lista en tarealista.Tareas si corresponde
-                        foreach (var tareaLista in tarealista.Tareas.Where(x => x.Id == dTO.Id))
+                        // Actualizar la lista en tarealista.Tareas si corresponde  
+                        var tareaLista = tarealista.Tareas.FirstOrDefault(x => x.Id == dTO.Id);
+                        if (tareaLista != null)
                         {
                             tareaLista.Estado = EstadoTareas.EnProgreso;
                         }
 
-                        // Guardar los cambios en el archivo JSON
+                        // Guardar los cambios en el archivo JSON  
                         File.WriteAllText("Assest/listatareas.json", JsonSerializer.Serialize(tarealista));
                     }
-                });
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error al guardar el archivo JSON: {ex.Message}");
+                    }
+                }
             });
         }
         private void Serverbb_TareaTerminada(TareasActivas dTO)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                // Buscar todas las tareas activas con el mismo Título
-                var tareasExistentes = Tareas.Where(x => x.Titulo == dTO.Titulo).ToList();
+                // Buscar la tarea activa con el mismo Título y IP  
+                var tareaExistente = Tareas.FirstOrDefault(x => x.Titulo == dTO.Titulo && x.IP == dTO.IP);
 
-                if (tareasExistentes.Any())
+                if (tareaExistente != null)
                 {
-                    foreach (var tarea in tareasExistentes)
+                    tareaExistente.Estado = EstadoTareas.Terminada;
+                    try
                     {
-                        tarea.Estado = EstadoTareas.Terminada;
-                        try
+                        // Actualizar la lista en tarealista.Tareas si corresponde  
+                        var tareaLista = tarealista.Tareas.FirstOrDefault(x => x.Id == dTO.Id);
+                        if (tareaLista != null)
                         {
-                            File.WriteAllText("Assest/listatareas.json", JsonSerializer.Serialize(tarealista));
+                            tareaLista.Estado = EstadoTareas.Terminada;
                         }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine($"Error al guardar el archivo JSON: {ex.Message}");
-                        }
-                    }
 
-                    // También actualiza la lista en tarealista.Tareas si corresponde
-                    foreach (var tareaLista in tarealista.Tareas.Where(x => x.Id == dTO.Id))
+                        // Guardar los cambios en el archivo JSON  
+                        File.WriteAllText("Assest/listatareas.json", JsonSerializer.Serialize(tarealista));
+                    }
+                    catch (Exception ex)
                     {
-                        tareaLista.Estado = EstadoTareas.Terminada;
+                        Console.WriteLine($"Error al guardar el archivo JSON: {ex.Message}");
                     }
-
-                    // Guardar los cambios en el archivo JSON
-                    File.WriteAllText("Assest/listatareas.json", JsonSerializer.Serialize(tarealista));
                 }
             });
         }
