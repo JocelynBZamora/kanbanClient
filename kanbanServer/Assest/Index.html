@@ -460,12 +460,12 @@
                     task.draggable = true;
                     task.ondragstart = drag;
                     task.innerHTML = `
-                        <h4>${titulo}</h4>
-                        <h6>${fechaCreacion}</h6>
-                        <p>${descripcion}</p>
-                        <p>${encargado}</p>
-                        <a class="eliminar fa fa-trash" aria-hidden="true"
-                          onclick="eliminarTarea('${taskId}')"></a>`;
+                                                    <h4>${titulo}</h4>
+                                                    <h6>${fechaCreacion}</h6>
+                                                    <p>${descripcion}</p>
+                                                    <p>${encargado}</p>
+                                                    <a class="eliminar fa fa-trash" aria-hidden="true"
+                                                      onclick="eliminarTarea('${taskId}')"></a>`;
                     document.getElementById("todo").appendChild(task);
                 }
             } catch (error) {
@@ -612,6 +612,22 @@
             agregarTarea.style.display = "none";
 
         });
+        async function obtenerIpActual() {
+            try {
+                const response = await fetch('/kanban/Tareas');
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log(data);
+                    return data.IP;
+                } else {
+                    console.error("Error al obtener la IP actual:", response.statusText);
+                    return null;
+                }
+            } catch (error) {
+                console.error("Error de red al obtener la IP actual:", error);
+                return null;
+            }
+        }
         var datosJS = "http://localhost:19800/kanban/Tareas";
         console.log(datosJS);
         async function cargarTareas() {
@@ -627,20 +643,32 @@
                 const fechaCreacion = new Date().toISOString();
 
                 if (data.Tareas && Array.isArray(data.Tareas)) {
-                    data.Tareas.forEach(tarea => {
+                    data.Tareas.forEach(async (tarea) => {
                         const task = document.createElement("div");
                         task.className = "task";
                         task.id = `task-${tarea.Id}`;
                         task.draggable = true;
                         task.ondragstart = drag;
-                        task.innerHTML = `
-                                <h4>${tarea.Titulo}</h4>
-                                <h6>${fechaCreacion}</h6>
-                                <p>${tarea.Descrip}</p>
-                                <p>${tarea.Encargado}</p>
-                                <input type="hidden" id="${tarea.Id}" value="${tarea.Titulo}" style="display:none;">
-                                <a class="eliminar fa fa-trash" aria-hidden="true"
-                                    onclick="eliminarTarea('${task.id}')"></a>`;
+                        
+                        // Crear el contenido base de la tarea
+                        let taskContent = `
+                            <h4>${tarea.Titulo}</h4>
+                            <h6>${fechaCreacion}</h6>
+                            <p>${tarea.Descrip}</p>
+                            <p>${tarea.Encargado}</p>
+                            <input type="hidden" id="${tarea.Id}" value="${tarea.Titulo}" style="display:none;">`;
+                        
+                        // Agregar el botón de eliminar solo si la IP coincide
+                        const currentIp = await obtenerIpActual();
+                        console.log(currentIp);
+
+                        if (tarea.IP === currentIp) {
+                            taskContent += `<a class="eliminar fa fa-trash" aria-hidden="true"
+                                onclick="eliminarTarea('${task.id}')"></a>`;
+                        }
+                        
+                        task.innerHTML = taskContent;
+                        
                         switch (tarea.Estado) {
                             case 0:
                                 document.getElementById('todo').appendChild(task);
@@ -650,7 +678,6 @@
                                 break;
                             case 2:
                                 document.getElementById('done').appendChild(task);
-
                                 break;
                         }
                     });
