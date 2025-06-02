@@ -97,8 +97,6 @@ namespace kanbanServer.Services
                 {
                     tarea.FechaCreacion = DateTime.Now;
                     tarea.IP = context.Request.RemoteEndPoint.Address.ToString();
-                    
-                   
                     if (e != null)
                     {
                         tarea.Estado = e.Value;

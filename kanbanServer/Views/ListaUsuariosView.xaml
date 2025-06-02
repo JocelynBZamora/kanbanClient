@@ -17,7 +17,7 @@
            TextAlignment="Center"
            Margin="10" />
         <DataGrid x:Name="dataGridUsuarios" AutoGenerateColumns="False" 
-          ItemsSource="{Binding Encargadobb}"
+           ItemsSource="{Binding Tareas}"
           CanUserAddRows="False"
           CanUserDeleteRows="False"
           CanUserReorderColumns="False"
@@ -73,9 +73,14 @@
                 Binding="{Binding FechaCreacion}"/>
                 <DataGridTextColumn Binding="{Binding Titulo}"
                     Width="1*" Header="Titulo"/>
-                <DataGridTextColumn Width="2*"
+                <DataGridTextColumn Width="1*"
                 Header="Estado de la tarea" 
                 Binding="{Binding  Estado}"/>
+                <DataGridTextColumn
+                    Header="Direccio ip" Width="1*"
+                    Binding="{Binding IP}">
+                    
+                </DataGridTextColumn>
         </DataGrid.Columns>
     </DataGrid>
     </DockPanel>

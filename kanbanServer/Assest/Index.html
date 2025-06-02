@@ -622,7 +622,7 @@
 
                 const data = await response.json();
                 console.log("Tareas recibidas del servidor:", data);
-
+                const fechaCreacion = new Date().toISOString();
 
                 if (data.Tareas && Array.isArray(data.Tareas)) {
                     data.Tareas.forEach(tarea => {
@@ -633,7 +633,7 @@
                         task.ondragstart = drag;
                         task.innerHTML = `
                             <h4>${tarea.Titulo}</h4>
-                            <h6>${new Date(tarea.FechaCreacion).toLocaleString()}</h6>
+                            <h6>${fechaCreacion}</h6>
                             <p>${tarea.Descrip}</p>
                             <p>${tarea.Encargado}</p>
                             <input type="hidden" id="${tarea.Id}" value="${tarea.Titulo}" style="display:none;">

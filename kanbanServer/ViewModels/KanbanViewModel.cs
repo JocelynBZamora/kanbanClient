@@ -72,11 +72,10 @@ namespace kanbanServer.ViewModels
 
                 if (tareaExistente != null)
                 {
-                    tareaExistente.Estado = EstadoTareas.Pendiente;
                     try
                     {
                         // Actualizar la lista en tarealista.Tareas si corresponde  
-                        var tareaLista = tarealista.Tareas.FirstOrDefault(x => x.Id == dTO.Id);
+                        var tareaLista = tarealista.Tareas.FirstOrDefault(t => t.IP == dTO.IP && t.Titulo == dTO.Titulo);
                         if (tareaLista != null)
                         {
                             tareaLista.Estado = EstadoTareas.Pendiente;
@@ -101,11 +100,10 @@ namespace kanbanServer.ViewModels
 
                 if (tareaExistente != null)
                 {
-                    tareaExistente.Estado = EstadoTareas.EnProgreso;
                     try
                     {
                         // Actualizar la lista en tarealista.Tareas si corresponde  
-                        var tareaLista = tarealista.Tareas.FirstOrDefault(x => x.Id == dTO.Id);
+                        var tareaLista = tarealista.Tareas.FirstOrDefault(t => t.IP == dTO.IP && t.Titulo == dTO.Titulo);
                         if (tareaLista != null)
                         {
                             tareaLista.Estado = EstadoTareas.EnProgreso;
@@ -130,11 +128,10 @@ namespace kanbanServer.ViewModels
 
                 if (tareaExistente != null)
                 {
-                    tareaExistente.Estado = EstadoTareas.Terminada;
                     try
                     {
                         // Actualizar la lista en tarealista.Tareas si corresponde  
-                        var tareaLista = tarealista.Tareas.FirstOrDefault(x => x.Id == dTO.Id);
+                        var tareaLista = tarealista.Tareas.FirstOrDefault(t => t.IP == dTO.IP && t.Titulo == dTO.Titulo);
                         if (tareaLista != null)
                         {
                             tareaLista.Estado = EstadoTareas.Terminada;

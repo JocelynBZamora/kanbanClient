@@ -35,7 +35,7 @@
                    Foreground="#989DAB"
                    Text="©Kanban "/>
         <views:ListaUsuariosView 
-            Grid.Row="2"></views:ListaUsuariosView>
-        <views:ListaActivos Grid.Row="2" Grid.Column="1" ></views:ListaActivos>
+            Grid.Row="2" Grid.ColumnSpan="2"></views:ListaUsuariosView>
+       
     </Grid>
 </Window>
