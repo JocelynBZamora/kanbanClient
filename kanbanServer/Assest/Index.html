@@ -499,6 +499,12 @@
                 return;
             }
 
+            if (sourceColumnId === "done" && targetColumnId === "inprogress") {
+
+                event.preventDefault();
+                return;
+            }
+
             if (["todo", "inprogress", "done"].includes(targetColumnId)) {
                 event.target.appendChild(taskElement);
 
