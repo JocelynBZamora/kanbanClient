@@ -44,7 +44,7 @@ namespace kanbanServer.ViewModels
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                var tareaExistente = Tareas.FirstOrDefault(t => t.Titulo == obj.Titulo && t.IP == obj.IP);
+                var tareaExistente = Tareas.FirstOrDefault(t => t.Titulo == obj.Titulo);
                 if (tareaExistente == null)
                 {
                     Tareas.Add(obj);

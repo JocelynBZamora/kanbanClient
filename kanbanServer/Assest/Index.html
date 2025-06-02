@@ -375,20 +375,20 @@
             <a></a>
         </nav>
     </header>
-    <section class="card" id="tareaAgregar">
+    <form class="card" id="tareaAgregar">
         <label for="titulo">Título de la tarea:</label>
-        <input type="text" name="titulo" id="titulo" placeholder="Título de la tarea">
+        <input type="text" name="titulo" id="titulo" placeholder="Título de la tarea" required="required">
         <label for="descripción">Descripción de la tarea:</label>
-        <input type="text" name="descripción" id="descripción" placeholder="Descripción de la tarea">
+        <input type="text" name="descripción" id="descripción" placeholder="Descripción de la tarea" required="required">
         <label for="Encargado">Encargado:</label>
-        <input type="text" name="Encargado" id="encargado" placeholder="Nombre del encargado">
+        <input type="text" name="Encargado" id="encargado" placeholder="Nombre del encargado" required="required">
         <div class="buttons">
             <button id="btnCancelar">Cancelar</button>
             <!-- <button class="eliminar">Eliminar</button> -->
             <button id="btnAgregar">Agregar</button>
 
         </div>
-    </section>
+    </form>
     <main style="display:none;" id="vistaTareas">
 
         <div class="kanban">
@@ -419,56 +419,58 @@
             const descripcion = document.getElementById("descripción").value.trim();
             const encargado = document.getElementById("encargado").value.trim();
 
-            if (titulo) {
-                // Verificar si ya existe una tarea igual
-                const tareaExistente = tareasExistentes.find(t => t.Titulo === titulo);
-                if (tareaExistente) {
-                    alert("La tarea ya existe.");
-                    return;
-                }
-                const fechaCreacion = new Date().toISOString();
-                const taskId = `${Math.random().toString(36).substring(2, 10)}`; // ID único
-                const taskData = {
-                    Id: taskId,
-                    Titulo: titulo,
-                    Descrip: descripcion,
-                    Encargado: encargado,
-                    FechaCreacion: fechaCreacion
-                };
+            // Validar que todos los campos estén llenos
+            if (!titulo || !descripcion || !encargado) {
+                alert("Por favor complete todos los campos antes de agregar la tarea.");
+                return;
+            }
 
-                try {
-                    const response = await fetch('/kanban/tarearesibida', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(taskData)
-                    });
+            // Verificar si ya existe una tarea igual
+            const tareaExistente = tareasExistentes.find(t => t.Titulo === titulo);
+            if (tareaExistente) {
+                alert("La tarea ya existe.");
+                return;
+            }
 
-                    if (response.ok) {
-                        tareasExistentes.push(taskData);
-                        agregarTarea.style.display = "none";
-                        vistaTareas.style.display = "block";
+            const fechaCreacion = new Date().toISOString();
+            const taskId = `${Math.random().toString(36).substring(2, 10)}`; // ID único
+            const taskData = {
+                Id: taskId,
+                Titulo: titulo,
+                Descrip: descripcion,
+                Encargado: encargado,
+                FechaCreacion: fechaCreacion
+            };
 
-                        const task = document.createElement("div");
-                        task.className = "task";
-                        task.id = taskId;
-                        task.draggable = true;
-                        task.ondragstart = drag;
-                        task.innerHTML = `
+            try {
+                const response = await fetch('/kanban/tarearesibida', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(taskData)
+                });
+
+                if (response.ok) {
+                    tareasExistentes.push(taskData);
+                    agregarTarea.style.display = "none";
+                    vistaTareas.style.display = "block";
+
+                    const task = document.createElement("div");
+                    task.className = "task";
+                    task.id = taskId;
+                    task.draggable = true;
+                    task.ondragstart = drag;
+                    task.innerHTML = `
                         <h4>${titulo}</h4>
                         <h6>${fechaCreacion}</h6>
                         <p>${descripcion}</p>
                         <p>${encargado}</p>
                         <a class="eliminar fa fa-trash" aria-hidden="true"
                           onclick="eliminarTarea('${taskId}')"></a>`;
-                        document.getElementById("todo").appendChild(task);
-                    }
-                } catch (error) {
-                    console.error('Error al agregar tarea:', error);
+                    document.getElementById("todo").appendChild(task);
                 }
-            } else {
-                alert("Por favor completa todos los campos.");
+            } catch (error) {
+                console.error('Error al agregar tarea:', error);
             }
-            
         });
         agregar.addEventListener("click", function () {
             vistaTareas.style.display = "none";
@@ -476,7 +478,7 @@
             document.getElementById("titulo").value = "";
             document.getElementById("descripción").value = "";
             document.getElementById("encargado").value = "";
-            
+
         });
         function allowDrop(event) {
             event.preventDefault();
@@ -534,7 +536,7 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(taskData)
                     });
-                    
+
                 } catch (error) {
                     console.error('Error al mover tarea:', error);
                 }
@@ -557,7 +559,7 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(taskData)
                     });
-                    
+
                 } catch (error) {
                     console.error('Error al mover tarea:', error);
                 }
@@ -580,7 +582,7 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(taskData)
                     });
-                    
+
                 } catch (error) {
                     console.error('Error al mover tarea:', error);
                 }
@@ -632,13 +634,13 @@
                         task.draggable = true;
                         task.ondragstart = drag;
                         task.innerHTML = `
-                            <h4>${tarea.Titulo}</h4>
-                            <h6>${fechaCreacion}</h6>
-                            <p>${tarea.Descrip}</p>
-                            <p>${tarea.Encargado}</p>
-                            <input type="hidden" id="${tarea.Id}" value="${tarea.Titulo}" style="display:none;">
-                            <a class="eliminar fa fa-trash" aria-hidden="true"
-                                onclick="eliminarTarea('${task.id}')"></a>`;
+                                <h4>${tarea.Titulo}</h4>
+                                <h6>${fechaCreacion}</h6>
+                                <p>${tarea.Descrip}</p>
+                                <p>${tarea.Encargado}</p>
+                                <input type="hidden" id="${tarea.Id}" value="${tarea.Titulo}" style="display:none;">
+                                <a class="eliminar fa fa-trash" aria-hidden="true"
+                                    onclick="eliminarTarea('${task.id}')"></a>`;
                         switch (tarea.Estado) {
                             case 0:
                                 document.getElementById('todo').appendChild(task);
@@ -648,7 +650,7 @@
                                 break;
                             case 2:
                                 document.getElementById('done').appendChild(task);
-                             
+
                                 break;
                         }
                     });
