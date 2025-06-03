@@ -440,6 +440,7 @@
                 Descrip: descripcion,
                 Encargado: encargado,
                 FechaCreacion: fechaCreacion
+
             };
 
             try {
@@ -659,10 +660,10 @@
                             <input type="hidden" id="${tarea.Id}" value="${tarea.Titulo}" style="display:none;">`;
                         
                         // Agregar el botón de eliminar solo si la IP coincide
-                        const currentIp = await obtenerIpActual();
-                        console.log(currentIp);
+                        const response = await fetch('https://api.ipify.org?format=json');
+                        const dataIp = await response.json();
 
-                        if (tarea.IP === currentIp) {  
+                        if (tarea.IP === dataIp) {  
                                                    const eliminarBtn = `<a class="eliminar fa fa-trash" aria-hidden="true" onclick="eliminarTarea('${tarea.Id}')"></a>`;  
                                                    taskContent += eliminarBtn;  
                                                } else {  
