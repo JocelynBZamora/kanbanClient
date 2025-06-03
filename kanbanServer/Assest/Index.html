@@ -496,45 +496,29 @@
             const sourceColumnId = taskElement.parentElement.id;
             const targetColumnId = event.target.id;
 
-            // Obtener IP pública del usuario
-            fetch('https://api.ipify.org?format=json')
-                .then(response => response.json())
-                .then(ipData => {
-                    const ipUsuario = ipData.ip;
-                    const ipAutorizada = "123.45.67.89"; // Puedes cargarla desde un archivo también
+            if (sourceColumnId === "inprogress" && targetColumnId === "todo") {
+                alert("No puedes mover una tarea en progreso a pendiente.");
+                return;
+            }
 
-                    if (ipUsuario !== ipAutorizada) {
-                        alert("No tienes permiso para mover tareas desde esta IP.");
-                        return;
-                    }
+            if (sourceColumnId === "done" && targetColumnId === "inprogress") {
 
-                    // Reglas de movimiento
-                    if (sourceColumnId === "inprogress" && targetColumnId === "todo") {
-                        alert("No puedes mover una tarea en progreso a pendiente.");
-                        return;
-                    }
+                event.preventDefault();
+                return;
+            }
 
-                    if (sourceColumnId === "done" && targetColumnId === "inprogress") {
-                        return;
-                    }
+            if (["todo", "inprogress", "done"].includes(targetColumnId)) {
+                event.target.appendChild(taskElement);
 
-                    if (["todo", "inprogress", "done"].includes(targetColumnId)) {
-                        event.target.appendChild(taskElement);
-
-                        if (targetColumnId === "todo") {
-                            tareapendiente(data);
-                        } else if (targetColumnId === "inprogress") {
-                            tareaEnProgreso(data);
-                        } else if (targetColumnId === "done") {
-                            tareaTerminada(data);
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error("Error al obtener la IP:", error);
-                });
+                if (targetColumnId === "todo") {
+                    tareapendiente(data);
+                } else if (targetColumnId === "inprogress") {
+                    tareaEnProgreso(data);
+                } else if (targetColumnId === "done") {
+                    tareaTerminada(data);
+                }
+            }
         }
-
         async function tareapendiente(taskId) {
             const taskElement = document.getElementById(taskId);
             if (taskElement) {
@@ -678,10 +662,13 @@
                         const currentIp = await obtenerIpActual();
                         console.log(currentIp);
 
-                        if (tarea.IP === currentIp) {
-                            taskContent += `<a class="eliminar fa fa-trash" aria-hidden="true"
-                                onclick="eliminarTarea('${task.id}')"></a>`;
-                        }
+                        if (tarea.IP === currentIp) {  
+                                                   const eliminarBtn = `<a class="eliminar fa fa-trash" aria-hidden="true" onclick="eliminarTarea('${tarea.Id}')"></a>`;  
+                                                   taskContent += eliminarBtn;  
+                                               } else {  
+                                                   task.draggable = false;  
+                                                   task.style.cursor = "not-allowed";  
+                                               }
                         
                         task.innerHTML = taskContent;
                         
