@@ -496,7 +496,7 @@
             const sourceColumnId = taskElement.parentElement.id;
             const targetColumnId = event.target.id;
 
-            if (sourceColumnId === "inprogress" || targetColumnId === "todo" || sourceColumnId === "done") {
+            if (sourceColumnId === "done" || targetColumnId === "todo") {
                 alert("No puedes mover una tarea a un estado anterior");
                 return;
             }
