@@ -375,7 +375,7 @@
             <a></a>
         </nav>
     </header>
-    <form class="card" id="tareaAgregar">
+    <section class="card" id="tareaAgregar">
         <label for="titulo">Título de la tarea:</label>
         <input type="text" name="titulo" id="titulo" placeholder="Título de la tarea" required="required">
         <label for="descripción">Descripción de la tarea:</label>
@@ -388,7 +388,7 @@
             <button id="btnAgregar">Agregar</button>
 
         </div>
-    </form>
+    </section>
     <main style="display:none;" id="vistaTareas">
 
         <div class="kanban">
@@ -414,6 +414,27 @@
         const inProgressColumn = document.getElementById("inprogress");
         const doneColumn = document.getElementById("done");
         let tareasExistentes = [];
+        let userIP = '';
+
+        // Función para obtener la IP del usuario
+        async function obtenerIP() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                userIP = data.ip;
+                return data.ip;
+            } catch (error) {
+                console.error('Error al obtener IP:', error);
+                return 'unknown';
+            }
+        }
+
+        // Obtener IP al cargar la página
+        document.addEventListener('DOMContentLoaded', async () => {
+            await obtenerIP();
+            cargarTareas();
+        });
+
         btnAgregar.addEventListener("click", async function () {
             const titulo = document.getElementById("titulo").value.trim();
             const descripcion = document.getElementById("descripción").value.trim();
@@ -439,8 +460,8 @@
                 Titulo: titulo,
                 Descrip: descripcion,
                 Encargado: encargado,
-                FechaCreacion: fechaCreacion
-
+                FechaCreacion: fechaCreacion,
+                idUsuario: userIP
             };
 
             try {
@@ -465,6 +486,7 @@
                                                     <h6>${fechaCreacion}</h6>
                                                     <p>${descripcion}</p>
                                                     <p>${encargado}</p>
+                                                    <p style="font-size: 0.7rem; color: #666;">IP: ${userIP}</p>
                                                     <a class="eliminar fa fa-trash" aria-hidden="true"
                                                       onclick="eliminarTarea('${taskId}')"></a>`;
                     document.getElementById("todo").appendChild(task);
@@ -641,20 +663,9 @@
                             <h6>${fechaCreacion}</h6>
                             <p>${tarea.Descrip}</p>
                             <p>${tarea.Encargado}</p>
+                            <p style="font-size: 0.7rem; color: #666;">IP: ${tarea.idUsuario || 'unknown'}</p>
                             <input type="hidden" id="${tarea.Id}" value="${tarea.Titulo}" style="display:none;">
                             <a class="eliminar fa fa-trash" aria-hidden="true" onclick="eliminarTarea('${tarea.Id}')"></a>`;
-                        
-                        // Agregar el botón de eliminar solo si la IP coincide
-                        //const response = await fetch('https://api.ipify.org?format=json');
-                        //const dataIp = await response.json();
-
-                        //if (tarea.IP === dataIp) {  
-                        //                           const eliminarBtn = `<a class="eliminar fa fa-trash" aria-hidden="true" onclick="eliminarTarea('${tarea.Id}')"></a>`;  
-                        //                           taskContent += eliminarBtn;  
-                        //                       } else {  
-                        //                           task.draggable = false;  
-                        //                           task.style.cursor = "not-allowed";  
-                        //                       }
                         
                         task.innerHTML = taskContent;
                         
