@@ -76,8 +76,6 @@ namespace kanbanServer.Services
                 {
                     context.Response.StatusCode = (int)HttpStatusCode.MethodNotAllowed;
                 }
-
-                context.Response.Close();
             }
             catch (Exception ex)
             {

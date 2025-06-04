@@ -151,24 +151,18 @@ namespace kanbanServer.ViewModels
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                // Buscar la tarea en la colección Tareas
-                var tareaExistente = Tareas.FirstOrDefault(t =>  t.IP == dTO.IP);
+                var tareaExistente = Tareas.FirstOrDefault(t =>  t.IP == dTO.IP );
 
                 if (tareaExistente != null)
                 {
-                    // Eliminar la tarea de la colección Tareas
-                    Tareas.Remove(tareaExistente);
-
-                    // Eliminar la tarea de la lista en tarealista.Tareas
-                    var tareaLista = tarealista.Tareas.FirstOrDefault(t => t.IP == dTO.IP);
-                    if (tareaLista != null)
-                    {
-                        tarealista.Tareas.Remove(tareaLista);
-                    }
-
-                    // Guardar los cambios en el archivo JSON
                     try
                     {
+                        Tareas.Remove(tareaExistente);
+                        var tareaLista = tarealista.Tareas.FirstOrDefault(t => t.IP == dTO.IP);
+                        if (tareaLista != null)
+                        {
+                            tarealista.Tareas.Remove(tareaLista);
+                        }
                         File.WriteAllText("Assest/listatareas.json", JsonSerializer.Serialize(tarealista));
                     }
                     catch (Exception ex)

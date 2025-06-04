@@ -414,8 +414,6 @@
         const inProgressColumn = document.getElementById("inprogress");
         const doneColumn = document.getElementById("done");
         let tareasExistentes = [];
-    
-
         btnAgregar.addEventListener("click", async function () {
             const titulo = document.getElementById("titulo").value.trim();
             const descripcion = document.getElementById("descripción").value.trim();
@@ -596,6 +594,7 @@
             if (!confirmar) return;
             if (taskElement) {
                 try {
+
                     const response = await fetch('/kanban/eliminar', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -635,7 +634,6 @@
                         task.id = `task-${tarea.Id}`;
                         task.draggable = true;
                         task.ondragstart = drag;
-                       
                             let taskContent = `
                                 <h4>${tarea.Titulo}</h4>
                                 <h6>${fechaCreacion}</h6>
@@ -644,14 +642,7 @@
                                 <p style="font-size: 0.7rem; color: #666;">IP: ${tarea.idUsuario || 'unknown'}</p>
                                 <input type="hidden" id="${tarea.Id}" value="${tarea.Titulo}" style="display:none;">
                                 <a class="eliminar fa fa-trash" aria-hidden="true" onclick="eliminarTarea('${tarea.Id}')"></a>`;
-                         
-                        
-                            
-                        
-                        // Crear el contenido base de la tarea
-
                         task.innerHTML = taskContent;
-
                         switch (tarea.Estado) {
                             case 0:
                                 document.getElementById('todo').appendChild(task);
@@ -671,9 +662,14 @@
             } catch (error) {
                 console.error("Error al cargar tareas:", error);
             }
-        }
 
-        document.addEventListener('DOMContentLoaded', cargarTareas);
+        }
+        //si regarga pero te regresa a la pagina de inicio
+        setInterval(function () {
+            window.location.reload("http://localhost:19800/kanban/Tareas");
+        }, 50000);
+
+        document.addEventListener('DOMContentLoaded', cargarTareas());
     </script>
 
 </body>
