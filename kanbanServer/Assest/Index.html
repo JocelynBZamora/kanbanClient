@@ -640,7 +640,6 @@
                                 <p>${tarea.Descrip}</p>
                                 <p>${tarea.Encargado}</p>
                                 <p style="font-size: 0.7rem; color: #666;">IP: ${tarea.idUsuario || 'unknown'}</p>
-                                <input type="hidden" id="${tarea.Id}" value="${tarea.Titulo}" style="display:none;">
                                 <a class="eliminar fa fa-trash" aria-hidden="true" onclick="eliminarTarea('${tarea.Id}')"></a>`;
                         task.innerHTML = taskContent;
                         switch (tarea.Estado) {
