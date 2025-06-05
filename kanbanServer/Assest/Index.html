@@ -669,7 +669,6 @@
                                 <h6>${fechaCreacion}</h6>
                                 <p>${tarea.Descrip}</p>
                                 <p>${tarea.Encargado}</p>
-                                <p style="font-size: 0.7rem; color: #666;">IP: ${tarea.idUsuario || 'unknown'}</p>
                                 <a class="eliminar fa fa-trash" aria-hidden="true" onclick="eliminarTarea('${tarea.Id}')"></a>`;
                         task.innerHTML = taskContent;
                         switch (tarea.Estado) {
